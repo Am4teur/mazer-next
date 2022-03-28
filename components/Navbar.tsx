@@ -4,7 +4,7 @@ import Button from "./basics/Button";
 
 const Navbar = () => {
   return (
-    <nav className="logo flex justify-center items-center border-b-4">
+    <nav className="logo flex justify-center items-center border-b-4 mx-4">
       <div className="logo flex basis-1/4">
         <span>Logo</span>
       </div>
@@ -19,7 +19,7 @@ const Navbar = () => {
           <a>Learn</a>
         </NextLink>
       </div>
-      <div className="auth flex basis-1/4 gap-2">
+      <div className="auth flex basis-1/4 gap-2 justify-end">
         <Button>Login</Button>
         <Button>Register</Button>
         <Button>Temporary</Button>
