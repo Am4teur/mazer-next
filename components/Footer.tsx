@@ -1,7 +1,11 @@
 import React from "react";
 
 const Footer = () => {
-  return <footer className="border-t-4">footer</footer>;
+  return (
+    <footer className="flex justify-center border-t-4 bg-gray-500">
+      Footer
+    </footer>
+  );
 };
 
 export default Footer;
