@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
+import CustomHead from "../components/CustomHead";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -21,6 +22,7 @@ const Register = () => {
 
   return (
     <>
+      <CustomHead title="Register"></CustomHead>
       <div>Register</div>
       <form onSubmit={registerUser}>
         <label>Username</label>
