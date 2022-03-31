@@ -20,7 +20,7 @@ const Register = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div>Register</div>
       <form onSubmit={registerUser}>
         <label>Username</label>
@@ -44,7 +44,7 @@ const Register = () => {
       <NextLink href="/" passHref>
         <button>Home</button>
       </NextLink>
-    </React.Fragment>
+    </>
   );
 };
 
