@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import NextLink from "next/link";
 import CustomHead from "../components/CustomHead";
 import { Formik, Field, Form } from "formik";
@@ -11,7 +11,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 
-const Register = () => {
+const Register = ({ users }: any) => {
   const registerUser = async (values: any) => {
     const { username, password } = values;
 
@@ -54,6 +54,19 @@ const Register = () => {
       error = "Password must have at least 6 letters";
     }
     return error;
+  };
+
+  const getUsers = async () => {
+    const url: string = "http://localhost:3000";
+    let res = await fetch(`${url}/api/users`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { data: users } = await res.json();
+
+    alert(JSON.stringify(users, null, 2));
   };
 
   return (
@@ -112,8 +125,27 @@ const Register = () => {
           <button>Home</button>
         </NextLink>
       </div>
+      <div className="m-8">
+        <Button onClick={getUsers}>Get Users</Button>
+      </div>
     </>
   );
 };
 
 export default Register;
+
+export async function getServerSideProps(context: any) {
+  let res = await fetch("http://localhost:3000/api/users", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  let { data: users } = await res.json();
+  users = users ? users : null;
+
+  return {
+    users,
+  };
+}
