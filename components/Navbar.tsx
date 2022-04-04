@@ -6,7 +6,7 @@ import Logo from "../public/favicon.ico";
 
 const Navbar = () => {
   return (
-    <nav className="logo flex justify-center items-center border-b-4 mx-4 bg-gray-500  rounded-full">
+    <nav className="logo flex justify-center items-center border-b-4 mx-4 bg-gray-600 rounded-full text-gray-whiteish">
       <NextLink href="/" passHref>
         <a className="logo flex basis-1/4 items-center gap-2 ml-8">
           <NextImage src={Logo} width={32} height={32} />
@@ -22,7 +22,7 @@ const Navbar = () => {
           <a>Path Finding</a>
         </NextLink>
         <NextLink href="/learn">
-          <a>Learn</a>
+          <a>Learn Maze Creation</a>
         </NextLink>
       </div>
       <div className="auth flex basis-1/4 gap-4 justify-end mr-8">
