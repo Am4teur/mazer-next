@@ -6,9 +6,14 @@ import Layout from "../components/Layout";
 
 const colors = {
   brand: {
-    900: "#1a365d",
-    800: "#153e75",
-    700: "#2a69ac",
+    "gray-light": "#36393f",
+    "gray-md": "#2f3136",
+    "gray-dark": "#202225",
+    "gray-whiteish": "#b9bbbe",
+    "blue-1": "#218ed8",
+    "blue-2": "#28a0f0",
+    "blue-3": "#008ff0",
+    "bg-blue": "#D1EDFF",
   },
 };
 
