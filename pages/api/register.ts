@@ -17,10 +17,6 @@ export default function handler(
   const { username, password } = req.body;
   console.log(req.body);
 
-  if (username === "test" && password === "test") {
-    res.json({ token: " x", username, password });
-  }
-
   res.json({
     token: jwt.sign(
       {
