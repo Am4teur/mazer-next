@@ -15,6 +15,8 @@ module.exports = {
         "blue-2": "#28a0f0",
         "blue-3": "#008ff0",
         "bg-blue": "#D1EDFF",
+        "white-transparent": "#ffffff80",
+        "white-more-transparent": "#ffffff20",
       },
       backgroundImage: {
         auth: "url('/blob-scene-haikei.svg')",
