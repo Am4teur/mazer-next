@@ -3,9 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 
 type Data = {
-  token: string;
-  username: string;
-  password: string;
+  token?: string;
+  username?: string;
+  password?: string;
+  msg?: string;
 };
 
 const KEY: string = "dasdasdsdfoakjervnotwuitvejnv";
@@ -14,7 +15,19 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
+  // username must be unique
+  // >= 3
+
+  // email must be unique
+  // must follow the regex
+
+  // TODO: if the username is not unique, receive an error and show it to user
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .json({ password: "That password is extremely short." });
+  }
   console.log(req.body);
 
   res.json({
@@ -61,3 +74,33 @@ export default function handler(
   //   .then(() => res.json(newUser))
   //   .catch(err => res.status(400).json("Error on '/users/register': " + err));
 }
+
+// const validateUsername = (username: string) => {
+//   let error;
+
+//   if (username.length < 3) {
+//     error = "Username must have at least 3 characters";
+//   }
+
+//   return error;
+// };
+
+// const validateEmail = (email: string) => {
+//   let error;
+
+//   if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
+//     error = "Invalid email address";
+//   }
+
+//   return error;
+// };
+
+// const validatePassword = (value: string) => {
+//   let error;
+
+//   if (value.length < 6) {
+//     error = "Password must have at least 6 characters";
+//   }
+
+//   return error;
+// };
