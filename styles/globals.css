@@ -8,10 +8,21 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  /* font-family: "Rubik", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  This is doing nothing because we are using ChakraUI (and Tailwind but ChakraUI overlaps)
+  */
 }
 
 a:hover {
   text-decoration: underline;
 }
+
+/* ChakraUI takes precedence over TailwindCSS
+So this code does nothing because it gets overwrited by ChakraUI
+@layer base {
+  a {
+    @apply underline;
+  }
+}
+*/
