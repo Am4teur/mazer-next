@@ -10,6 +10,7 @@ import {
   Button,
   Heading,
 } from "@chakra-ui/react";
+import axios from "axios";
 
 const Register = ({ users }: any) => {
   const registerUser = async (values: any) => {
@@ -57,7 +58,13 @@ const Register = ({ users }: any) => {
   };
 
   const getUsers = async () => {
-    const url: string = "http://localhost:3000";
+    const url: string | undefined = process.env.URL_DEV;
+
+    if (!url) {
+      alert("The url is undefined, check the .env file");
+      return;
+    }
+
     let res = await fetch(`${url}/api/users`, {
       method: "GET",
       headers: {
@@ -135,17 +142,19 @@ const Register = ({ users }: any) => {
 export default Register;
 
 export async function getServerSideProps(context: any) {
-  let res = await fetch("http://localhost:3000/api/users", {
+  let res = await axios(`${process.env.URL_DEV}api/users`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
 
-  let { data: users } = await res.json();
+  let { data: users } = await res;
   users = users ? users : null;
 
   return {
-    users,
+    props: {
+      users,
+    },
   };
 }
