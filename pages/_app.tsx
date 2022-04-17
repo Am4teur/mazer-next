@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import Layout from "../components/Layout";
+import { getSession, SessionProvider } from "next-auth/react";
 
 const colors = {
   brand: {
@@ -26,14 +27,24 @@ const theme = extendTheme({
   },
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <SessionProvider session={session}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </SessionProvider>
     </ChakraProvider>
   );
 }
+
+// export async function getServerSideProps(context: any) {
+//   return {
+//     props: {
+//       session: await getSession(context),
+//     },
+//   };
+// }
 
 export default MyApp;
