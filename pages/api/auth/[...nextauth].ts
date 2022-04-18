@@ -4,6 +4,9 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+//@ts-ignore
+import clientPromise from "../../../lib/mongodb";
 
 export default NextAuth({
   // @ts-ignore
@@ -23,16 +26,17 @@ export default NextAuth({
       id: "email-password",
       name: "Email & Password",
       async authorize(credentials, req) {
+        // should very in DB by doing a call
         const user = {
           /* add function to get user */
         };
 
-        console.log("inside authorize");
+        console.log("inside authorize", credentials);
 
         return user;
       },
       credentials: {
-        username: {
+        email: {
           label: "Email",
           type: "text",
           placeholder: "Email Address",
@@ -50,12 +54,18 @@ export default NextAuth({
     //   from: "NextAuth.js <no-reply@example.com>",
     // }),
   ],
-
+  database: process.env.MONGODB_URI,
+  //@ts-ignore
+  adapter: MongoDBAdapter(clientPromise),
+  strategy: "jwt",
+  jwt: {
+    secret: process.env.NEXTAUTH_JWT_SECRET,
+  },
   pages: {
-    signIn: "/register",
-    signOut: "/auth/signout",
+    signIn: "/auth/auth",
+    // signOut: "/auth/signout",
     // error: "/auth/error", // Error code passed in query string as ?error=
     // verifyRequest: "/auth/verify-request", // (used for check email message)
-    newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
+    // newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
   },
 });
