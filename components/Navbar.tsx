@@ -3,8 +3,12 @@ import NextLink from "next/link";
 import NextImage from "next/image";
 import Button from "./basics/Button";
 import Logo from "../public/favicon.ico";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
   return (
     <nav className="logo flex justify-center items-center border-b-4 mx-4 bg-gray-600 rounded-full text-gray-whiteish">
       <NextLink href="/" passHref>
@@ -25,14 +29,23 @@ const Navbar = () => {
           <a>Learn Maze Creation</a>
         </NextLink>
       </div>
-      <div className="auth flex basis-1/4 gap-4 justify-end mr-8">
-        <NextLink href="/login" passHref>
-          <Button>Login</Button>
-        </NextLink>
-        <NextLink href="/register" passHref>
-          <Button>Register</Button>
-        </NextLink>
-        {/* <Button>Temporary</Button> */}
+      <div
+        className={`auth flex basis-1/4 gap-4 justify-end mr-8 ${
+          loading ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        {session ? (
+          <Button onClick={() => signOut()}>Sign Out</Button>
+        ) : (
+          <>
+            <NextLink href="/auth/auth" passHref>
+              <Button>Login</Button>
+            </NextLink>
+            {/* <NextLink href="/api/auth/signin" passHref>
+              <Button onClick={() => signIn()}>Register</Button>
+            </NextLink> */}
+          </>
+        )}
       </div>
     </nav>
   );
