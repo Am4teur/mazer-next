@@ -9,14 +9,18 @@ interface ILayoutProps {
 const Layout = ({ children }: ILayoutProps) => {
   const { pathname } = useRouter();
 
+  const pathsWithoutNavbar = ["/auth/auth"];
+
+  const renderNavbar = pathsWithoutNavbar.includes(pathname);
+
   return (
     <div className="app flex flex-col w-full min-h-screen bg-bg-blue">
-      {pathname === "/auth" ? null : <Navbar />}
+      {renderNavbar ? null : <Navbar />}
       <main className="flex flex-col grow justify-center items-center">
         {children}
       </main>
 
-      {pathname === "/auth" ? null : <Footer />}
+      {renderNavbar ? null : <Footer />}
     </div>
   );
 };
