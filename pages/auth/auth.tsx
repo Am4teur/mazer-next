@@ -10,8 +10,37 @@ import {
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import axios from "axios";
+import {
+  getProviders,
+  signIn,
+  getSession,
+  getCsrfToken,
+} from "next-auth/react";
 
-const Auth: NextPage = () => {
+const ProvidersButtons = ({ providers }: any) => (
+  <div className="flex flex-col w-full">
+    {Object.values(providers).map(
+      (provider: any) =>
+        provider.id !== "email-password" && (
+          <Button
+            key={provider.name}
+            mb={6}
+            bg="brand.blue-3"
+            type="submit"
+            onClick={() => {
+              signIn(provider.id, {
+                callbackUrl: `${process.env.URL_DEV}/`,
+              });
+            }}
+          >
+            Sign in with {provider.name}
+          </Button>
+        )
+    )}
+  </div>
+);
+
+const Auth: NextPage = ({ providers }: any) => {
   const [authType, setAuthType] = useState("Login");
   const [beErrors, setBeErrors] = useState({
     username: "",
@@ -67,6 +96,14 @@ const Auth: NextPage = () => {
   };
 
   const loginUser = async (email: string, password: string) => {
+    const status = await signIn("credentials", {
+      // redirect: false,
+      email: email,
+      password: password,
+    });
+    console.log("status: ", status);
+    return;
+
     const res = await axios
       .post(
         "/api/login",
@@ -116,7 +153,16 @@ const Auth: NextPage = () => {
             </button>
           </span>
         )}
+
         <div className="w-full border-solid border-b-2 rounded-full mb-6"></div>
+
+        <ProvidersButtons providers={providers} />
+
+        <div className="flex w-full items-center justify-center gap-2 mb-4">
+          <div className="w-full border-solid border-b-2 rounded-full flex-1"></div>
+          <span>Or</span>
+          <div className="w-full border-solid border-b-2 rounded-full flex-1"></div>
+        </div>
 
         <Formik
           initialValues={{}} // { email: "", password: "" }
@@ -206,3 +252,13 @@ const Auth: NextPage = () => {
 };
 
 export default Auth;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      providers: await getProviders(),
+      session: await getSession(),
+      csrfToken: await getCsrfToken(),
+    },
+  };
+}
