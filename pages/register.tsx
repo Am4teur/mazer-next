@@ -19,7 +19,7 @@ const Register = ({ users }: any) => {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, password }),
     }).then((t) => t.json());

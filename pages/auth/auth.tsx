@@ -64,7 +64,8 @@ const Auth: NextPage = ({ providers }: any) => {
 
   const redirectToHome = () => {
     const { pathname } = Router;
-    if (pathname === "/auth") {
+    if (pathname === "/auth/auth") {
+      // TODO: redirect to a success register page
       Router.push("/");
     }
   };
@@ -88,7 +89,7 @@ const Auth: NextPage = ({ providers }: any) => {
         {
           headers: {
             Accept: "application/json",
-            "content-type": "application/json",
+            "Content-Type": "application/json",
           },
         }
       )
@@ -122,7 +123,7 @@ const Auth: NextPage = ({ providers }: any) => {
         {
           headers: {
             Accept: "application/json",
-            "content-type": "application/json",
+            "Content-Type": "application/json",
           },
         }
       )
