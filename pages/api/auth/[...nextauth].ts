@@ -22,6 +22,7 @@ export default NextAuth({
       // @ts-ignore
       clientSecret: process.env.GOOGLE_SECRET,
     }),
+    // Email & Password
     CredentialsProvider({
       id: "email-password",
       name: "Email & Password",
@@ -48,10 +49,21 @@ export default NextAuth({
         },
       },
     }),
-    // Passwordless / email sign in
+    // Passwordless, Only email
     // EmailProvider({
-    //   server: process.env.MAIL_SERVER,
-    //   from: "NextAuth.js <no-reply@example.com>",
+    //   server: process.env.EMAIL_SERVER,
+    //   from: "Mazer <no-reply@mazer.com>",
+    // }),
+    // EmailProvider({
+    //   server: {
+    //     host: process.env.EMAIL_SERVER_HOST,
+    //     port: process.env.EMAIL_SERVER_PORT,
+    //     auth: {
+    //       user: process.env.EMAIL_SERVER_USER,
+    //       pass: process.env.EMAIL_SERVER_PASSWORD
+    //     }
+    //   },
+    //   from: process.env.EMAIL_FROM
     // }),
   ],
   database: process.env.MONGODB_URI,
