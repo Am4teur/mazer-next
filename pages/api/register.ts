@@ -2,17 +2,22 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
+import bcrypt from "bcrypt";
 
-type Data = {
+interface RegisterData {
   token?: string;
   username?: string;
   email?: string;
   password?: string;
-};
+  msg?: string;
+}
 
 // async..await is not allowed in global scope, must use a wrapper
-async function sendConfirmationEmail(emailSendTo: string) {
+async function sendConfirmationEmail(emailSendTo: string, user: any) {
+  console.log(process.env.MAZER_EMAIL, process.env.MAZER_EMAIL_PASSWORD);
+
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -21,36 +26,41 @@ async function sendConfirmationEmail(emailSendTo: string) {
     },
   });
 
-  const info = await transporter.sendMail({
-    from: `"Mazer 🧩" <${process.env.MAZER_EMAIL}>`,
-    to: emailSendTo,
-    subject: "Confirmation Email",
-    text: "Hello world?", // plain text body
-    html: "<b>Hello world?</b>", // html body
-  });
+  jwt.sign(
+    {
+      userId: user._id,
+    },
+    process.env.EMAIL_SECRET || "",
+    {
+      expiresIn: "1d",
+    },
+    (err, emailToken) => {
+      const url = `${process.env.NEXTAUTH_URL}auth/confirmation/${emailToken}`;
 
-  console.log("Message sent: %s", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+      transporter.sendMail({
+        from: `"Mazer 🧩" <${process.env.MAZER_EMAIL}>`,
+        to: emailSendTo,
+        subject: "Mazer Confirm Email",
+        html: `Please click this link to confirm your email: <a href="${url}">${url}</a>`,
+      });
+    }
+  );
 }
 
 const validateEmail = (email: string) => {
   //if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
   //  error = "Invalid email address";
   //}
-  const regEx =
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const regEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   return regEx.test(email);
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<RegisterData>
 ) {
   const { username, email, password } = req.body;
+  console.log(username, email, password);
 
   // TODO: this check could be done on the FE
   if (username.length < 3) {
@@ -61,7 +71,10 @@ export default async function handler(
   if (!validateEmail(email)) {
     return res.status(400).json({ email: "Email is invalid" });
   }
+  console.log("some");
+  await dbConnect();
   const emailUser = await User.findOne({ email: email });
+  console.log("some2");
   if (emailUser) {
     return res.status(400).json({ email: "Email already exists" });
   }
@@ -81,33 +94,28 @@ export default async function handler(
   // id
   // username || name
   // email
-  // password
+  // hashedPassword
   // image
   // emailverified
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const defaultImage = "default_image";
 
-  // const { email, password, passwordCheck, username, mazes, icon} = req.body;
-
-  // const salt = await bcrypt.genSalt();
-  // const hashedPassword = await bcrypt.hash(password, salt);
-
-  // const newUser = new User({ email, hashedPassword, username, mazes, icon });
-
-  // newUser.save()
-  //   .then(() => res.json(newUser))
-  //   .catch(err => res.status(400).json("Error on '/users/register': " + err));
-
-  // create JWT
-  res.json({
-    token: jwt.sign(
-      {
-        username,
-        password,
-      },
-      process.env.EMAIL_JWT_SECRET || "secret missing on env"
-    ),
-    username: username,
-    password: password,
+  const newUser = new User({
+    username: username ? username : email.split("@")[0],
+    email,
+    hashedPassword,
+    image: defaultImage,
+    emailVerified: false,
   });
 
-  sendConfirmationEmail("emailSendTo").catch(console.error);
+  console.log(newUser);
+  newUser
+    .save()
+    .then(() => res.json(newUser))
+    .catch((err: string) =>
+      res.status(400).json({ msg: "Error on '/api/register': " + err })
+    );
+
+  sendConfirmationEmail(email, newUser).catch(console.error);
 }

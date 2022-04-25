@@ -4,6 +4,13 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      minlength: 3,
+    },
     email: {
       type: String,
       required: true,
@@ -14,13 +21,13 @@ const userSchema = new Schema(
       required: true,
       minlength: 5,
     },
-    username: {
+    image: {
       type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      /*minlength: 3*/
     },
+    emailVerified: {
+      type: Boolean,
+    },
+    /* Extra fields */
     x: {
       type: Number,
     },
@@ -39,5 +46,5 @@ const userSchema = new Schema(
   // }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;
