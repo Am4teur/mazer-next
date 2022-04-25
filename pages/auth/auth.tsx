@@ -3,9 +3,11 @@ import type { NextPage } from "next";
 import Router from "next/router";
 import {
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  FormHelperText,
   Input,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
@@ -16,9 +18,10 @@ import {
   getSession,
   getCsrfToken,
 } from "next-auth/react";
+import NextImage from "next/image";
 
 const ProvidersButtons = ({ providers }: any) => (
-  <div className="flex flex-col w-full">
+  <Flex direction="column" w="100%">
     {Object.values(providers).map(
       (provider: any) =>
         provider.id !== "email-password" && (
@@ -33,11 +36,12 @@ const ProvidersButtons = ({ providers }: any) => (
               });
             }}
           >
+            {/* <NextImage src="/google-color.svg" width="16" height="16" /> */}
             Sign in with {provider.name}
           </Button>
         )
     )}
-  </div>
+  </Flex>
 );
 
 const Auth: NextPage = ({ providers }: any) => {
@@ -70,6 +74,13 @@ const Auth: NextPage = ({ providers }: any) => {
     email: string,
     password: string
   ) => {
+    //register
+    //  api to register to DB
+    //    check if any errors and present them in the register form
+    //    including email not confirmed yet
+    //  send email for confirmation
+    //  (DB has to have a "confirmed" field)
+
     const res = await axios
       .post(
         "/api/register",
@@ -177,11 +188,7 @@ const Auth: NextPage = ({ providers }: any) => {
               {authType === "Register" && (
                 <Field name="username">
                   {({ field, form }: any) => (
-                    <FormControl
-                      isRequired
-                      isInvalid={Boolean(beErrors.username)}
-                      mb={8}
-                    >
+                    <FormControl isInvalid={Boolean(beErrors.username)} mb={6}>
                       <FormLabel htmlFor="username">Username:</FormLabel>
                       <Input
                         {...field}
@@ -189,6 +196,9 @@ const Auth: NextPage = ({ providers }: any) => {
                         placeholder="Username"
                         background={"blue.600"}
                       />
+                      <FormHelperText color="gray.300">
+                        If not provided, we will use your email
+                      </FormHelperText>
                       <FormErrorMessage>{beErrors.username}</FormErrorMessage>
                     </FormControl>
                   )}
@@ -199,7 +209,7 @@ const Auth: NextPage = ({ providers }: any) => {
                   <FormControl
                     isRequired
                     isInvalid={Boolean(beErrors.email)}
-                    mb={8}
+                    mb={6}
                   >
                     <FormLabel htmlFor="email">Email:</FormLabel>
                     <Input
