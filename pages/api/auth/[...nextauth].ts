@@ -1,13 +1,27 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-// import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import { compare } from "bcrypt";
 
 export default NextAuth({
+  session: {
+    strategy: "jwt",
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_JWT_SECRET,
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/auth",
+    // signOut: "/auth/signout",
+    // error: "/auth/error", // Error code passed in query string as ?error=
+    // verifyRequest: "/auth/verify-request", // (used for check email message)
+    // newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
+  debug: process.env.NODE_ENV === "development",
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID,
@@ -34,7 +48,7 @@ export default NextAuth({
           type: "password",
         },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         await dbConnect();
         console.log("credentials", credentials);
 
@@ -59,73 +73,18 @@ export default NextAuth({
         return loggedUser;
       },
     }),
-    // Passwordless, Only email
-    // EmailProvider({
-    //   server: process.env.EMAIL_SERVER,
-    //   from: "Mazer <no-reply@mazer.com>",
-    // }),
-    // EmailProvider({
-    //   server: {
-    //     host: process.env.EMAIL_SERVER_HOST,
-    //     port: process.env.EMAIL_SERVER_PORT,
-    //     auth: {
-    //       user: process.env.EMAIL_SERVER_USER,
-    //       pass: process.env.EMAIL_SERVER_PASSWORD
-    //     }
-    //   },
-    //   from: process.env.EMAIL_FROM
-    // }),
   ],
-  jwt: {
-    secret: process.env.NEXTAUTH_JWT_SECRET,
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/auth",
-    // signOut: "/auth/signout",
-    // error: "/auth/error", // Error code passed in query string as ?error=
-    // verifyRequest: "/auth/verify-request", // (used for check email message)
-    // newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
-  },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      console.log("!user", user);
-      console.log("!account", account);
-
-      //if github or google in account.provider
-      //DB users collection lookup
-      //if not => put data into db
-      //if yes => nothing
-
-      const isAllowedToSignIn = true;
-      if (isAllowedToSignIn) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     async jwt({ token, user }: any) {
-      console.log("!user", user);
-      console.log("!token", token);
-
       //credentials
       if (user) {
-        token.id = user.username;
-      }
-      //github or google
-      else {
         token.id = user.username;
       }
 
       return token;
     },
 
-    async session({ session, token, user }: any) {
-      console.log("!session", session);
-      console.log("!token", token);
-      console.log("!user", user);
-
-      //same logic of jwt callback with if(user)
+    async session({ session, token }: any) {
       if (token) {
         session.id = token.id;
         session.g = "g";
@@ -134,5 +93,4 @@ export default NextAuth({
       return session;
     },
   },
-  debug: process.env.NODE_ENV === "development",
 });

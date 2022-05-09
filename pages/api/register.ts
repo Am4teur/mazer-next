@@ -6,7 +6,7 @@ import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
 import bcrypt from "bcrypt";
 
-interface RegisterData {
+interface ResponseData {
   token?: string;
   username?: string;
   email?: string;
@@ -16,7 +16,11 @@ interface RegisterData {
 
 // async..await is not allowed in global scope, must use a wrapper
 async function sendConfirmationEmail(emailSendTo: string, user: any) {
-  console.log(process.env.MAZER_EMAIL, process.env.MAZER_EMAIL_PASSWORD);
+  console.log(
+    "stuff",
+    process.env.MAZER_EMAIL,
+    process.env.MAZER_EMAIL_PASSWORD
+  );
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -47,49 +51,60 @@ async function sendConfirmationEmail(emailSendTo: string, user: any) {
   );
 }
 
-const validateEmail = (email: string) => {
-  //if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
-  //  error = "Invalid email address";
-  //}
+const validateEmail = (email: string): boolean => {
   const regEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   return regEx.test(email);
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<RegisterData>
-) {
-  const { username, email, password } = req.body;
-  console.log(username, email, password);
-
+const validateForm = async (
+  username: string,
+  email: string,
+  password: string
+) => {
   // TODO: this check could be done on the FE
-  if (username.length < 3) {
-    return res
-      .status(400)
-      .json({ username: "Username must have 3 or more characters" });
+  if (username.length > 0 && username.length < 3) {
+    return { username: "Username must have 3 or more characters" };
   }
+  // TODO: this check could be done on the FE
   if (!validateEmail(email)) {
-    return res.status(400).json({ email: "Email is invalid" });
+    return { email: "Email is invalid" };
   }
-  console.log("some");
   await dbConnect();
   const emailUser = await User.findOne({ email: email });
-  console.log("some2");
+  // This is the only check that must be done on the BE
   if (emailUser) {
-    return res.status(400).json({ email: "Email already exists" });
+    return { email: "Email already exists" };
   }
 
+  // TODO: this check could be done on the FE
   // if (password != passwordCheck) {
   //   return res.status(400).json({ msg: "Those passwords don't match." });
   // }
   // TODO: this check could be done on the FE
   if (password.length < 5) {
-    return res
-      .status(400)
-      .json({ password: "Password must have 5 or more characters" });
+    return { password: "Password must have 5 or more characters" };
   }
 
-  // create new entry on DB
+  return null;
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) {
+  if (req.method !== "POST") {
+    return res
+      .status(200)
+      .json({ msg: "This API call only accepts POST methods" });
+  }
+
+  const { username, email, password } = req.body;
+
+  const errorMessage = await validateForm(username, email, password);
+  if (errorMessage) {
+    return res.status(400).json(errorMessage as ResponseData);
+  }
+
   // DB name: users
   // id
   // username || name
@@ -97,8 +112,7 @@ export default async function handler(
   // hashedPassword
   // image
   // emailverified
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(password, salt);
+  const hashedPassword = await bcrypt.hash(password, 12);
   const defaultImage = "default_image";
 
   const newUser = new User({
@@ -109,10 +123,11 @@ export default async function handler(
     emailVerified: false,
   });
 
-  console.log(newUser);
   newUser
     .save()
-    .then(() => res.json(newUser))
+    .then(() =>
+      res.status(200).json({ msg: "Successfuly created new User: " + newUser })
+    )
     .catch((err: string) =>
       res.status(400).json({ msg: "Error on '/api/register': " + err })
     );

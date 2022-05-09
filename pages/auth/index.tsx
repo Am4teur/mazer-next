@@ -18,7 +18,6 @@ import {
   getSession,
   getCsrfToken,
 } from "next-auth/react";
-import NextImage from "next/image";
 
 const ProvidersButtons = ({ providers }: any) => (
   <Flex direction="column" w="100%">
@@ -167,7 +166,7 @@ const Auth: NextPage = ({ providers }: any) => {
                         background={"blue.600"}
                       />
                       <FormHelperText color="gray.300">
-                        If not provided, the username is equal to the email
+                        If not provided, your email will be used instead
                       </FormHelperText>
                       <FormErrorMessage>{beErrors.username}</FormErrorMessage>
                     </FormControl>
@@ -232,3 +231,13 @@ const Auth: NextPage = ({ providers }: any) => {
 };
 
 export default Auth;
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      providers: await getProviders(),
+      session: await getSession(),
+      csrfToken: await getCsrfToken(),
+    },
+  };
+}

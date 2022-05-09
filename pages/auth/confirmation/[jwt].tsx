@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 const Confirmation = () => {
   const router = useRouter();
   const { jwt } = router.query;
-  console.log(jwt);
 
   useEffect(() => {
     axios.post(
