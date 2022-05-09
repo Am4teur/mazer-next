@@ -7,7 +7,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  const loading = status === "loading";
+  console.log("session", session);
+
+  const isLoading = status === "loading";
 
   return (
     <nav className="logo flex justify-center items-center border-b-4 mx-4 bg-gray-600 rounded-full text-gray-whiteish">
@@ -31,14 +33,14 @@ const Navbar = () => {
       </div>
       <div
         className={`auth flex basis-1/4 gap-4 justify-end mr-8 ${
-          loading ? "opacity-0" : "opacity-100"
+          isLoading ? "opacity-0" : "opacity-100"
         }`}
       >
         {session ? (
           <Button onClick={() => signOut()}>Sign Out</Button>
         ) : (
           <>
-            <NextLink href="/auth/auth" passHref>
+            <NextLink href="/auth" passHref>
               <Button>Login</Button>
             </NextLink>
             {/* <NextLink href="/api/auth/signin" passHref>

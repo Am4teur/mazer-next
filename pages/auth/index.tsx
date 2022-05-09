@@ -24,7 +24,7 @@ const ProvidersButtons = ({ providers }: any) => (
   <Flex direction="column" w="100%">
     {Object.values(providers).map(
       (provider: any) =>
-        provider.id !== "email-password" && (
+        provider.name !== "Credentials" && (
           <Button
             key={provider.name}
             mb={6}
@@ -64,7 +64,7 @@ const Auth: NextPage = ({ providers }: any) => {
 
   const redirectToHome = () => {
     const { pathname } = Router;
-    if (pathname === "/auth/auth") {
+    if (pathname === "/auth") {
       // TODO: redirect to a success register page
       Router.push("/");
     }
@@ -75,13 +75,6 @@ const Auth: NextPage = ({ providers }: any) => {
     email: string,
     password: string
   ) => {
-    //register
-    //  api to register to DB
-    //    check if any errors and present them in the register form
-    //    including email not confirmed yet
-    //  send email for confirmation
-    //  (DB has to have a "confirmed" field)
-
     const res = await axios
       .post(
         "/api/register",
@@ -108,37 +101,13 @@ const Auth: NextPage = ({ providers }: any) => {
   };
 
   const loginUser = async (email: string, password: string) => {
-    const status = await signIn("credentials", {
+    const loggedUser = await signIn("credentials", {
       // redirect: false,
       email: email,
       password: password,
+      callbackUrl: `${window.location.origin}`,
     });
-    console.log("status: ", status);
-    return;
-
-    const res = await axios
-      .post(
-        "/api/login",
-        { email, password },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        setBeErrors({
-          username: "",
-          email: "",
-          password: "",
-        });
-        redirectToHome();
-      })
-      .catch((error) => {
-        // check this
-        setBeErrors(error.response.data);
-      });
+    console.log("Logged User: ", loggedUser);
   };
 
   return (
@@ -198,7 +167,7 @@ const Auth: NextPage = ({ providers }: any) => {
                         background={"blue.600"}
                       />
                       <FormHelperText color="gray.300">
-                        If not provided, we will use your email
+                        If not provided, the username is equal to the email
                       </FormHelperText>
                       <FormErrorMessage>{beErrors.username}</FormErrorMessage>
                     </FormControl>
@@ -263,13 +232,3 @@ const Auth: NextPage = ({ providers }: any) => {
 };
 
 export default Auth;
-
-export async function getServerSideProps() {
-  return {
-    props: {
-      providers: await getProviders(),
-      session: await getSession(),
-      csrfToken: await getCsrfToken(),
-    },
-  };
-}
