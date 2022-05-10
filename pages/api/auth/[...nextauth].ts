@@ -71,25 +71,67 @@ export default NextAuth({
         }
         console.log("loggedUser", loggedUser);
         return loggedUser;
+
+        //
+        //
+        //
+        // const client = await connect();
+        // const usersCollection = client.db().collection("users");
+
+        // const user = await usersCollection.findOne({
+        //   email: credentials.email,
+        // });
+
+        // if (!user) {
+        //   client.close();
+        //   throw new Error("No user found!");
+        // }
+
+        // const isValid = bcrypt.compare(credentials.password, user.password);
+
+        // if (!isValid) {
+        //   client.close();
+        //   throw new Error("Invalid password/email");
+        // }
+        // client.close();
+        // return user;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }: any) {
-      //credentials
       if (user) {
-        token.id = user.username;
+        //token.user = user ? why not ? because of github google?
+        token.user = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          image: user.image,
+          emailVerified: user.emailVerified,
+          mazes: user.mazes,
+        };
       }
+
+      // github
+
+      // google
+
+      // loggedUser {
+      //   _id: new ObjectId("62793c6f24fc69919966db86"),
+      //   username: '123',
+      //   email: 'fedahoj684@abincol.com',
+      //   hashedPassword: '$2b$12$8DVf/V./hHweeb8LfHgQuuR6Ju5Xot76hFVkh0k0Y40jwXA6N9rYG',
+      //   image: 'default_image',
+      //   emailVerified: true,
+      //   mazes: [],
+      //   __v: 0
+      // }
 
       return token;
     },
 
     async session({ session, token }: any) {
-      if (token) {
-        session.id = token.id;
-        session.g = "g";
-      }
-
+      session.user = token.user;
       return session;
     },
   },
