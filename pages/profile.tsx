@@ -21,13 +21,25 @@ const Profile = () => {
     <>
       <CustomHead title="Profile"></CustomHead>
       <h1>Profile</h1>
-      {Object.entries(session && session.user ? session.user : {}).map(
-        (value, key) => {
-          return <span key={key}>{value.toString()}</span>;
-        }
+      {session ? (
+        <>
+          {Object.entries(session && session.user ? session.user : {}).map(
+            (value, key) => {
+              return <span key={key}>{value.toString()}</span>;
+            }
+          )}
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="New Username"
+            width="auto"
+            borderColor="gray.500"
+          />
+          <Button onClick={changeUsername}>Change Username</Button>
+        </>
+      ) : (
+        <div>Access Denied</div>
       )}
-      <Input value={username} onChange={(e) => setUsername(e.target.value)} />
-      <Button onClick={changeUsername}>Change Username</Button>
       <NextLink href="/" passHref>
         <Button>Home</Button>
       </NextLink>
