@@ -50,15 +50,14 @@ const Auth: NextPage = ({ providers }: any) => {
     email: "",
     password: "",
   });
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const onSubmit = (values: any, actions: any) => {
-    const { username, email, password } = values;
-
+  const onSubmit = (actions: any) => {
     actions.setSubmitting(false);
 
-    authType === "Login"
-      ? loginUser(email, password)
-      : registerUser(username, email, password);
+    authType === "Login" ? loginUser() : registerUser();
   };
 
   const redirectToHome = () => {
@@ -69,11 +68,7 @@ const Auth: NextPage = ({ providers }: any) => {
     }
   };
 
-  const registerUser = async (
-    username: string,
-    email: string,
-    password: string
-  ) => {
+  const registerUser = async () => {
     const res = await axios
       .post(
         "/api/register",
@@ -85,13 +80,13 @@ const Auth: NextPage = ({ providers }: any) => {
           },
         }
       )
-      .then((res) => {
-        // update context with res
+      .then(async (res) => {
         setBeErrors({
           username: "",
           email: "",
           password: "",
         });
+        await loginUser();
         redirectToHome();
       })
       .catch((error) => {
@@ -99,13 +94,14 @@ const Auth: NextPage = ({ providers }: any) => {
       });
   };
 
-  const loginUser = async (email: string, password: string) => {
+  const loginUser = async () => {
     const loggedUser = await signIn("credentials", {
       // redirect: false,
       email: email,
       password: password,
       callbackUrl: `${window.location.origin}`,
     });
+
     console.log("Logged User: ", loggedUser);
   };
 
@@ -149,7 +145,7 @@ const Auth: NextPage = ({ providers }: any) => {
           validateOnChange={false}
           validateOnBlur={false}
           onSubmit={(values, actions) => {
-            onSubmit(values, actions);
+            onSubmit(actions);
           }}
         >
           {(props) => (
@@ -160,7 +156,8 @@ const Auth: NextPage = ({ providers }: any) => {
                     <FormControl isInvalid={Boolean(beErrors.username)} mb={6}>
                       <FormLabel htmlFor="username">Username:</FormLabel>
                       <Input
-                        {...field}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         id="username"
                         placeholder="Username"
                         background={"blue.600"}
@@ -182,7 +179,8 @@ const Auth: NextPage = ({ providers }: any) => {
                   >
                     <FormLabel htmlFor="email">Email:</FormLabel>
                     <Input
-                      {...field}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       id="email"
                       placeholder="Email Address"
                       background={"blue.600"}
@@ -200,7 +198,8 @@ const Auth: NextPage = ({ providers }: any) => {
                   >
                     <FormLabel htmlFor="password">Password</FormLabel>
                     <Input
-                      {...field}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       type="password"
                       placeholder="Password"
                       background={"blue.600"}
