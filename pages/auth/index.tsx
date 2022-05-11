@@ -9,6 +9,7 @@ import {
   FormLabel,
   FormHelperText,
   Input,
+  Box,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import axios from "axios";
@@ -18,6 +19,8 @@ import {
   getSession,
   getCsrfToken,
 } from "next-auth/react";
+import GithubSVG from "../../public/GithubSVG";
+import GoogleColoredSVG from "../../public/GoogleColoredSVG";
 
 const ProvidersButtons = ({ providers }: any) => (
   <Flex direction="column" w="100%">
@@ -27,7 +30,8 @@ const ProvidersButtons = ({ providers }: any) => (
           <Button
             key={provider.name}
             mb={6}
-            bg="brand.blue-3"
+            bg={provider.name === "GitHub" ? "#24292E" : "white"}
+            color={provider.name === "GitHub" ? "white" : "#000"}
             type="submit"
             onClick={() => {
               signIn(provider.id, {
@@ -35,8 +39,9 @@ const ProvidersButtons = ({ providers }: any) => (
               });
             }}
           >
-            {/* <NextImage src="/google-color.svg" width="16" height="16" /> */}
-            Sign in with {provider.name}
+            {provider.name === "GitHub" && <GithubSVG />}
+            {provider.name === "Google" && <GoogleColoredSVG />}
+            <Box ml={2}>Sign in with {provider.name}</Box>
           </Button>
         )
     )}
