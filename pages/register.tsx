@@ -57,25 +57,6 @@ const Register = ({ users }: any) => {
     return error;
   };
 
-  const getUsers = async () => {
-    const url: string | undefined = process.env.URL_DEV;
-
-    if (!url) {
-      alert("The url is undefined, check the .env file");
-      return;
-    }
-
-    let res = await fetch(`${url}/api/users`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const { data: users } = await res.json();
-
-    alert(JSON.stringify(users, null, 2));
-  };
-
   return (
     <>
       <CustomHead title="Register"></CustomHead>
@@ -131,9 +112,6 @@ const Register = ({ users }: any) => {
         <NextLink href="/" passHref>
           <button>Home</button>
         </NextLink>
-      </div>
-      <div className="m-8">
-        <Button onClick={getUsers}>Get Users</Button>
       </div>
     </>
   );

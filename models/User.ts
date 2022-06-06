@@ -27,18 +27,14 @@ const userSchema = new Schema(
     emailVerified: {
       type: Boolean,
     },
-    /* Extra fields */
-    x: {
-      type: Number,
-    },
-    y: {
-      type: Number,
-    },
+    /* Mazer Data */
     mazes: {
       type: [Schema.Types.ObjectId],
+      default: [],
     },
-    icon: {
-      type: String,
+    score: {
+      type: Number,
+      default: 0,
     },
   }
   // {

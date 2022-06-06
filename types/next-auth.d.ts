@@ -12,6 +12,7 @@ declare module "next-auth" {
       image: string;
       emailVerified: boolean;
       mazes: string[];
+      score: number;
     };
   }
 }

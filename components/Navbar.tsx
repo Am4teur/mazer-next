@@ -48,8 +48,8 @@ const Navbar = () => {
             <NextLink href="/auth" passHref>
               <Button>Login</Button>
             </NextLink>
-            {/* <NextLink href="/api/auth/signin" passHref>
-              <Button onClick={() => signIn()}>Register</Button>
+            {/* <NextLink href="/auth" passHref>
+              <Button>Register</Button>
             </NextLink> */}
           </>
         )}

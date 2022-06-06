@@ -2,11 +2,16 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+// @ts-ignore
+import clientPromise from "../../../lib/mongodb";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import { compare } from "bcrypt";
 
 export default NextAuth({
+  // @ts-ignore
+  adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: "jwt",
   },
@@ -50,87 +55,81 @@ export default NextAuth({
       },
       async authorize(credentials) {
         await dbConnect();
-        console.log("credentials", credentials);
 
-        //Find user with the email
-        const loggedUser = await User.findOne({
+        // Find user with the email
+        const user = await User.findOne({
           email: credentials?.email,
         });
-        //Not found - send error res
-        if (!loggedUser) {
-          throw new Error("No user found with the email");
+
+        // Email Not found
+        if (!user) {
+          throw new Error("Email is not registered");
         }
-        //Check hased password with DB password
-        const checkPassword = await compare(
+
+        // Check hased password with DB hashed password
+        const isPasswordCorrect = await compare(
           credentials!.password,
-          loggedUser.hashedPassword
+          user.hashedPassword
         );
-        //Incorrect password - send response
-        if (!checkPassword) {
-          throw new Error("Password doesnt match");
+
+        // Incorrect password
+        if (!isPasswordCorrect) {
+          throw new Error("Password is incorrect");
         }
-        console.log("loggedUser", loggedUser);
-        return loggedUser;
 
-        //
-        //
-        //
-        // const client = await connect();
-        // const usersCollection = client.db().collection("users");
-
-        // const user = await usersCollection.findOne({
-        //   email: credentials.email,
-        // });
-
-        // if (!user) {
-        //   client.close();
-        //   throw new Error("No user found!");
-        // }
-
-        // const isValid = bcrypt.compare(credentials.password, user.password);
-
-        // if (!isValid) {
-        //   client.close();
-        //   throw new Error("Invalid password/email");
-        // }
-        // client.close();
-        // return user;
+        return user;
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, profile, account }: any) {
+      console.log("jwt", user, account, profile, token);
+
       if (user) {
-        //token.user = user ? why not ? because of github google?
+        const provider = account.provider;
+        if (provider === "github") {
+          console.log("it is github");
+        }
+        if (provider === "google") {
+          console.log("it is google");
+        }
+
+        await dbConnect();
+
+        const filter = { email: user.email };
+        const update = {
+          username: user.name,
+          email: user.email,
+          image: user.image,
+          emailVerified: true,
+          mazes: user.mazes || [],
+          score: user.score || 0,
+        };
+
+        let doc = await User.findOneAndUpdate(filter, update, {
+          new: true,
+        });
+
+        console.log(doc);
+
+        //update token
         token.user = {
           id: user.id,
-          username: user.username,
+          username: user.username || user.name,
           email: user.email,
           image: user.image,
           emailVerified: user.emailVerified,
-          mazes: user.mazes,
+          mazes: user.mazes || [],
+          score: user.score || 0,
         };
       }
-
-      // github
-
-      // google
-
-      // loggedUser {
-      //   _id: new ObjectId("62793c6f24fc69919966db86"),
-      //   username: '123',
-      //   email: 'fedahoj684@abincol.com',
-      //   hashedPassword: '$2b$12$8DVf/V./hHweeb8LfHgQuuR6Ju5Xot76hFVkh0k0Y40jwXA6N9rYG',
-      //   image: 'default_image',
-      //   emailVerified: true,
-      //   mazes: [],
-      //   __v: 0
-      // }
 
       return token;
     },
 
     async session({ session, token }: any) {
+      console.log("session", session, token);
+
       session.user = token.user;
       return session;
     },
