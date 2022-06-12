@@ -3,14 +3,12 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-// @ts-ignore
 import clientPromise from "../../../lib/mongodb";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import { compare } from "bcrypt";
 
 export default NextAuth({
-  // @ts-ignore
   adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: "jwt",
@@ -33,8 +31,8 @@ export default NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID!,
-      clientSecret: process.env.GOOGLE_SECRET!,
+      clientId: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
     }),
     // Email & Password
     CredentialsProvider({
@@ -83,15 +81,12 @@ export default NextAuth({
     async jwt({ token, user, profile, account }: any) {
       console.log("jwt", user, account, profile, token);
 
-      if (user) {
-        const provider = account.provider;
-        if (provider === "github") {
-          console.log("it is github");
-        }
-        if (provider === "google") {
-          console.log("it is google");
-        }
+      const getOldUser = (user: any) => {
+        token.user = user;
+        return token;
+      };
 
+      const updateNewUser = async (user: any) => {
         await dbConnect();
 
         const filter = { email: user.email };
@@ -102,13 +97,12 @@ export default NextAuth({
           emailVerified: true,
           mazes: user.mazes || [],
           score: user.score || 0,
+          // type: account.provider,
         };
 
-        let doc = await User.findOneAndUpdate(filter, update, {
+        await User.findOneAndUpdate(filter, update, {
           new: true,
         });
-
-        console.log(doc);
 
         //update token
         token.user = {
@@ -120,6 +114,12 @@ export default NextAuth({
           mazes: user.mazes || [],
           score: user.score || 0,
         };
+
+        return token;
+      };
+
+      if (user) {
+        token = user?.username ? getOldUser(user) : updateNewUser(user);
       }
 
       return token;

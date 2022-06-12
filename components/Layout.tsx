@@ -9,7 +9,7 @@ interface ILayoutProps {
 const Layout = ({ children }: ILayoutProps) => {
   const { pathname } = useRouter();
 
-  const pathsWithoutNavbar = ["/auth"];
+  const pathsWithoutNavbar = ["/auth", "/auth/auth2"];
 
   const renderNavbar = pathsWithoutNavbar.includes(pathname);
 
