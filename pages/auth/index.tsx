@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { NextPage } from "next";
-import NextImage from "next/image";
-import NextLink from "next/link";
 import Router from "next/router";
+import NextLink from "next/link";
+import { getProviders, signIn } from "next-auth/react";
 import CustomHead from "../../components/CustomHead";
 import {
   Button,
@@ -13,16 +13,12 @@ import {
   FormHelperText,
   Input,
   Box,
+  Text,
+  Heading,
+  Link,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import axios from "axios";
-import {
-  getProviders,
-  signIn,
-  getSession,
-  getCsrfToken,
-} from "next-auth/react";
-import MazerLogo from "../../public/favicon.ico";
 import GithubSVG from "../../public/GithubSVG";
 import GoogleColoredSVG from "../../public/GoogleColoredSVG";
 
@@ -35,6 +31,9 @@ const ProvidersButtons = ({ providers }: any) => (
             key={provider.name}
             mb={6}
             bg={provider.name === "GitHub" ? "#24292E" : "white"}
+            _hover={{
+              bg: provider.name === "GitHub" ? "#24292E90" : "#ffffff90",
+            }}
             color={provider.name === "GitHub" ? "white" : "#000"}
             type="submit"
             onClick={() => {
@@ -52,8 +51,63 @@ const ProvidersButtons = ({ providers }: any) => (
   </Flex>
 );
 
+const Background = ({ children }: any) => (
+  <Box
+    display="flex"
+    flex="1 1 auto"
+    justifyContent="center"
+    alignItems="center"
+    backgroundImage="url('/blue-bubbles.svg')"
+    backgroundSize="cover"
+    backgroundRepeat="no-repeat"
+    backgroundPosition="center"
+    backgroundAttachment="fixed"
+    width="100%"
+    height="100vh"
+    color="white"
+  >
+    {children}
+  </Box>
+);
+
+interface IDivicerProps {
+  word?: string;
+}
+
+const Divider = ({ word }: IDivicerProps) => {
+  return (
+    <>
+      {word ? (
+        <Flex
+          w="100%"
+          alignItems="center"
+          justifyContent="center"
+          gap={2}
+          mb={4}
+        >
+          <Box w="100%" border="solid" borderBottom={2} rounded="full"></Box>
+          <Text>Or</Text>
+          <Box w="100%" border="solid" borderBottom={2} rounded="full"></Box>
+        </Flex>
+      ) : (
+        <Box
+          w="100%"
+          border="solid"
+          borderBottom={2}
+          rounded="full"
+          mb={6}
+        ></Box>
+      )}
+    </>
+  );
+};
+
 const Auth: NextPage = ({ providers }: any) => {
   const [authType, setAuthType] = useState("Login");
+  const oppAuthType: { [key: string]: string } = {
+    Login: "Register",
+    Register: "Login",
+  };
   const [beErrors, setBeErrors] = useState({
     username: "",
     email: "",
@@ -78,7 +132,7 @@ const Auth: NextPage = ({ providers }: any) => {
   };
 
   const registerUser = async () => {
-    const res = await axios
+    await axios
       .post(
         "/api/register",
         { username, email, password },
@@ -89,7 +143,7 @@ const Auth: NextPage = ({ providers }: any) => {
           },
         }
       )
-      .then(async (res) => {
+      .then(async () => {
         setBeErrors({
           username: "",
           email: "",
@@ -101,7 +155,6 @@ const Auth: NextPage = ({ providers }: any) => {
       .catch((error) => {
         setBeErrors(error.response.data);
       });
-    console.log(res);
   };
 
   const loginUser = async () => {
@@ -132,144 +185,149 @@ const Auth: NextPage = ({ providers }: any) => {
   return (
     <>
       <CustomHead title={authType}></CustomHead>
-      {/* With flex-1 I only need w-full because its flex-row.
-       If it was flex-col, I would only need h-full. */}
-      <div className="flex-1 h-full w-full flex justify-center items-center bg-auth bg-fixed bg-center bg-cover bg-no-repeat text-white">
-        <div className="flex flex-col justify-center items-center bg-gradient-to-r from-white-transparent to-white-more-transparent rounded-md p-12 w-[420px]">
-          <h2 className="leading-10 text-[24px] font-extrabold">{authType}</h2>
-          {authType === "Login" ? (
-            <span className="text-[14px] mb-6 font-normal">
-              Not registered yet?{" "}
-              <button
-                className="underline"
-                onClick={() => setAuthType("Register")}
-              >
-                Register
+      <Background>
+        <Box
+          w="420px"
+          rounded="md"
+          bgGradient="linear(to-r, #ffffff80, #ffffff20)"
+          p={12}
+        >
+          <Flex direction="column" justifyContent="center" alignItems="center">
+            <Heading size="xl">{authType}</Heading>
+            <Text fontSize="sm" mb={6}>
+              {authType === "Login"
+                ? "Not registered yet? "
+                : "Already have an account? "}
+              <button onClick={() => setAuthType(oppAuthType[authType])}>
+                <Text as="u">{oppAuthType[authType]}</Text>
               </button>
-            </span>
-          ) : (
-            <span className="text-[14px] mb-6 font-normal">
-              Already have an account?{" "}
-              <button
-                className="underline"
-                onClick={() => setAuthType("Login")}
-              >
-                Login
-              </button>
-            </span>
-          )}
+            </Text>
 
-          <div className="w-full border-solid border-b-2 rounded-full mb-6"></div>
+            <Divider />
 
-          <ProvidersButtons providers={providers} />
+            <ProvidersButtons providers={providers} />
 
-          <div className="flex w-full items-center justify-center gap-2 mb-4">
-            <div className="w-full border-solid border-b-2 rounded-full flex-1"></div>
-            <span>Or</span>
-            <div className="w-full border-solid border-b-2 rounded-full flex-1"></div>
-          </div>
+            <Divider word="Or" />
 
-          <Formik
-            initialValues={{}} // { email: "", password: "" }
-            validateOnChange={false}
-            validateOnBlur={false}
-            onSubmit={(values, actions) => {
-              onSubmit(actions);
-            }}
-          >
-            {(props) => (
-              <Form className="flex flex-col w-full mb-4">
-                {authType === "Register" && (
-                  <Field name="username">
-                    {({ field, form }: any) => (
-                      <FormControl
-                        isInvalid={Boolean(beErrors.username)}
-                        mb={6}
+            <Formik
+              initialValues={{}}
+              validateOnChange={false}
+              validateOnBlur={false}
+              onSubmit={(_, actions) => {
+                onSubmit(actions);
+              }}
+            >
+              {(props) => (
+                <Box w="100%">
+                  <Form>
+                    <Box display="flex" flexDirection="column" mb={4}>
+                      {authType === "Register" && (
+                        <Field name="username">
+                          {() => (
+                            <FormControl
+                              isInvalid={Boolean(beErrors.username)}
+                              mb={6}
+                            >
+                              <FormLabel htmlFor="username">
+                                Username:
+                              </FormLabel>
+                              <Input
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                id="username"
+                                placeholder="Username"
+                                background={"blue.600"}
+                              />
+                              <FormHelperText color="gray.300">
+                                If not provided, your email will be used instead
+                              </FormHelperText>
+                              <FormErrorMessage>
+                                {beErrors.username}
+                              </FormErrorMessage>
+                            </FormControl>
+                          )}
+                        </Field>
+                      )}
+                      <Field name="email">
+                        {() => (
+                          <FormControl
+                            isRequired
+                            isInvalid={Boolean(beErrors.email)}
+                            mb={6}
+                          >
+                            <FormLabel htmlFor="email">Email:</FormLabel>
+                            <Input
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              id="email"
+                              placeholder="Email Address"
+                              background={"blue.600"}
+                            />
+                            <FormErrorMessage>
+                              {beErrors.email}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                      <Field name="password">
+                        {() => (
+                          <FormControl
+                            isRequired
+                            isInvalid={Boolean(beErrors.password)}
+                            mb={3}
+                          >
+                            <FormLabel htmlFor="password">Password</FormLabel>
+                            <Input
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              type="password"
+                              placeholder="Password"
+                              background={"blue.600"}
+                            />
+                            <FormErrorMessage>
+                              {beErrors.password}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                      <Button
+                        mt={6}
+                        bg="brand.blue-3"
+                        _hover={{ bg: "hsl(204, 100%, 70%)" }}
+                        // hover is the brand.blue-3 from 47% to 70%
+                        // https://www.w3schools.com/colors/colors_converter.asp
+                        isLoading={props.isSubmitting}
+                        type="submit"
                       >
-                        <FormLabel htmlFor="username">Username:</FormLabel>
-                        <Input
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                          id="username"
-                          placeholder="Username"
-                          background={"blue.600"}
-                        />
-                        <FormHelperText color="gray.300">
-                          If not provided, your email will be used instead
-                        </FormHelperText>
-                        <FormErrorMessage>{beErrors.username}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-                )}
-                <Field name="email">
-                  {({ field, form }: any) => (
-                    <FormControl
-                      isRequired
-                      isInvalid={Boolean(beErrors.email)}
-                      mb={6}
-                    >
-                      <FormLabel htmlFor="email">Email:</FormLabel>
-                      <Input
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        id="email"
-                        placeholder="Email Address"
-                        background={"blue.600"}
-                      />
-                      <FormErrorMessage>{beErrors.email}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Field name="password">
-                  {({ field, form }: any) => (
-                    <FormControl
-                      isRequired
-                      isInvalid={Boolean(beErrors.password)}
-                      mb={3}
-                    >
-                      <FormLabel htmlFor="password">Password</FormLabel>
-                      <Input
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        placeholder="Password"
-                        background={"blue.600"}
-                      />
-                      <FormErrorMessage>{beErrors.password}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Button
-                  mt={6}
-                  bg="brand.blue-3"
-                  isLoading={props.isSubmitting}
-                  type="submit"
-                >
-                  {authType}
-                </Button>
-              </Form>
+                        {authType}
+                      </Button>
+                    </Box>
+                  </Form>
+                </Box>
+              )}
+            </Formik>
+            {authType === "Login" && (
+              <Text mt={2} fontSize="sm">
+                <NextLink href="#" passHref>
+                  <Link>
+                    <Text as="u">Forgot password?</Text>
+                  </Link>
+                </NextLink>
+              </Text>
             )}
-          </Formik>
-          {authType === "Login" && (
-            <span className="text-[14px] font-normal">
-              <a className="underline">Forgot password?</a>
-            </span>
-          )}
-        </div>
-      </div>
+          </Flex>
+        </Box>
+      </Background>
     </>
   );
 };
-
-export default Auth;
 
 export async function getServerSideProps() {
   return {
     props: {
       providers: await getProviders(),
-      session: await getSession(),
-      csrfToken: await getCsrfToken(),
     },
   };
 }
+
+export default Auth;

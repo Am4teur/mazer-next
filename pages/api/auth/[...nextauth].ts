@@ -8,6 +8,11 @@ import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import { compare } from "bcrypt";
 
+const GOOGLE_ID = process.env.GOOGLE_ID ? process.env.GOOGLE_ID : "WRONG_ID";
+const GOOGLE_SECRET = process.env.GOOGLE_SECRET
+  ? process.env.GOOGLE_SECRET
+  : "WRONG_SECRET";
+
 export default NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   session: {
@@ -31,8 +36,8 @@ export default NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
+      clientId: GOOGLE_ID,
+      clientSecret: GOOGLE_SECRET,
     }),
     // Email & Password
     CredentialsProvider({
