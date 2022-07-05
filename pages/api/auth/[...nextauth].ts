@@ -17,6 +17,7 @@ export default NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: "jwt",
+    maxAge: 2 * 24 * 60 * 60,
   },
   jwt: {
     secret: process.env.NEXTAUTH_JWT_SECRET,
