@@ -17,12 +17,3 @@ body {
 a:hover {
   text-decoration: underline;
 }
-
-/* ChakraUI takes precedence over TailwindCSS
-So this code does nothing because it gets overwrited by ChakraUI
-@layer base {
-  a {
-    @apply underline;
-  }
-}
-*/
