@@ -136,11 +136,11 @@ const Playground = () => {
   };
 
   return (
-    <div>
-      <MazeBoard />
+    <>
       <button onClick={publish}>publish</button>
       <button onClick={getMazes}>get mazes</button>
-    </div>
+      <MazeBoard />
+    </>
   );
 };
 

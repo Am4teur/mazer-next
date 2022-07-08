@@ -24,10 +24,10 @@ const Play = () => {
   return (
     <>
       <h1>Play</h1>
-      <Playground />
       <NextLink href="/" passHref>
         <button>Home</button>
       </NextLink>
+      <Playground />
     </>
   );
 };
