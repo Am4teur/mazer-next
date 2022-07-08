@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import Router from "next/router";
 import NextLink from "next/link";
 import { getProviders, signIn } from "next-auth/react";
-import CustomHead from "../../components/CustomHead";
+import CustomHead from "@/components/CustomHead";
 import {
   Button,
   Flex,
@@ -19,8 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import axios from "axios";
-import GithubSVG from "../../public/GithubSVG";
-import GoogleColoredSVG from "../../public/GoogleColoredSVG";
+import GithubSVG from "@/public/GithubSVG";
+import GoogleColoredSVG from "@/public/GoogleColoredSVG";
 
 const ProvidersButtons = ({ providers }: any) => (
   <Flex direction="column" w="100%">

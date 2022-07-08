@@ -1,6 +1,5 @@
-import React from "react";
 import NextLink from "next/link";
-import CustomHead from "../components/CustomHead";
+import CustomHead from "@/components/CustomHead";
 
 const PathFinding = () => {
   return (

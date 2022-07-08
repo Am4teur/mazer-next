@@ -1,8 +1,7 @@
-import React from "react";
 import NextLink from "next/link";
 import NextImage from "next/image";
-import Button from "./basics/Button";
-import Logo from "../public/favicon.ico";
+import Button from "@/components/basics/Button";
+import Logo from "@/public/favicon.ico";
 import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {

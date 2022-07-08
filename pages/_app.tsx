@@ -3,7 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "../styles/theme";
 import "../styles/globals.css"; // TODO remove
-import Layout from "../components/Layout";
+import Layout from "@/components/Layout";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (

@@ -1,5 +1,3 @@
-import React from "react";
-
 const GithubSVG = (props: any) => (
   <svg
     aria-label="github"

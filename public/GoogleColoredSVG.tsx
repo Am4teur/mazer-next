@@ -1,5 +1,3 @@
-import React from "react";
-
 const GoogleColoredSVG = (props: any) => (
   <svg
     aria-label="google"

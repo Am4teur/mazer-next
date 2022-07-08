@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import NextLink from "next/link";
 import CustomHead from "@/components/CustomHead";
 import { useSession } from "next-auth/react";
