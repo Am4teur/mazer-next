@@ -24,30 +24,31 @@ import GoogleColoredSVG from "../../public/GoogleColoredSVG";
 
 const ProvidersButtons = ({ providers }: any) => (
   <Flex direction="column" w="100%">
-    {Object.values(providers).map(
-      (provider: any) =>
-        provider.name !== "Credentials" && (
-          <Button
-            key={provider.name}
-            mb={6}
-            bg={provider.name === "GitHub" ? "#24292E" : "white"}
-            _hover={{
-              bg: provider.name === "GitHub" ? "#24292E90" : "#ffffff90",
-            }}
-            color={provider.name === "GitHub" ? "white" : "#000"}
-            type="submit"
-            onClick={() => {
-              signIn(provider.id, {
-                callbackUrl: `${process.env.URL_DEV}/`,
-              });
-            }}
-          >
-            {provider.name === "GitHub" && <GithubSVG />}
-            {provider.name === "Google" && <GoogleColoredSVG />}
-            <Box ml={2}>Sign in with {provider.name}</Box>
-          </Button>
-        )
-    )}
+    {providers &&
+      Object.values(providers).map(
+        (provider: any) =>
+          provider.name !== "Credentials" && (
+            <Button
+              key={provider.name}
+              mb={6}
+              bg={provider.name === "GitHub" ? "#24292E" : "white"}
+              _hover={{
+                bg: provider.name === "GitHub" ? "#24292E90" : "#ffffff90",
+              }}
+              color={provider.name === "GitHub" ? "white" : "#000"}
+              type="submit"
+              onClick={() => {
+                signIn(provider.id, {
+                  callbackUrl: `${process.env.URL_DEV}/`,
+                });
+              }}
+            >
+              {provider.name === "GitHub" && <GithubSVG />}
+              {provider.name === "Google" && <GoogleColoredSVG />}
+              <Box ml={2}>Sign in with {provider.name}</Box>
+            </Button>
+          )
+      )}
   </Flex>
 );
 

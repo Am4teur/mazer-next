@@ -1,9 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import dbConnect from "@/lib/dbConnect";
+import User from "@/models/User";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
-import dbConnect from "../../lib/dbConnect";
-import User from "../../models/User";
 import bcrypt from "bcrypt";
 
 interface ResponseData {

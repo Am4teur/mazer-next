@@ -1,8 +1,16 @@
-import mongoose from "mongoose";
+import { Schema, model, models } from "mongoose";
 
-const Schema = mongoose.Schema;
+interface IUser {
+  username: string;
+  email: string;
+  hashedPassword: string;
+  image: string;
+  emailVerified: boolean;
+  mazes: { mazeId: string }[];
+  score: number;
+}
 
-const userSchema = new Schema(
+const userSchema = new Schema<IUser>(
   {
     username: {
       type: String,
@@ -29,7 +37,7 @@ const userSchema = new Schema(
     },
     /* Mazer Data */
     mazes: {
-      type: [Schema.Types.ObjectId],
+      type: [{ mazeId: String }],
       default: [],
     },
     score: {
@@ -42,5 +50,5 @@ const userSchema = new Schema(
   // }
 );
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = models.User || model<IUser>("User", userSchema);
 export default User;

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import dbConnect from "../../lib/dbConnect";
-import User from "../../models/User";
+import dbConnect from "@/lib/dbConnect";
+import User from "@/models/User";
 import jwt from "jsonwebtoken";
 
 interface ConfirmationData {
@@ -32,7 +32,7 @@ export default async function handler(
   }
 
   User.findById(userId)
-    .then((user) => {
+    .then((user: any) => {
       user.emailVerified = true;
 
       user

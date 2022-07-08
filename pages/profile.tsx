@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
-import CustomHead from "../components/CustomHead";
+import CustomHead from "@/components/CustomHead";
 import { useSession } from "next-auth/react";
-import Button from "../components/basics/Button";
+import Button from "@/components/basics/Button";
 import { Input } from "@chakra-ui/react";
 import axios from "axios";
 
@@ -19,7 +19,7 @@ const Profile = () => {
   };
 
   const getInfoFromDB = async () => {
-    const res = await axios
+    await axios
       .get("/api/users", {
         headers: {
           Accept: "application/json",

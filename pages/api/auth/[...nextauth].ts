@@ -3,9 +3,9 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import clientPromise from "../../../lib/mongodb";
-import dbConnect from "../../../lib/dbConnect";
-import User from "../../../models/User";
+import clientPromise from "@/lib/mongodb";
+import dbConnect from "@/lib/dbConnect";
+import User from "@/models/User";
 import { compare } from "bcrypt";
 
 const GOOGLE_ID = process.env.GOOGLE_ID ? process.env.GOOGLE_ID : "WRONG_ID";
