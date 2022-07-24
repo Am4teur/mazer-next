@@ -19,8 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import axios from "axios";
-import GithubSVG from "@/public/GithubSVG";
-import GoogleColoredSVG from "@/public/GoogleColoredSVG";
+import GithubSVG from "@/public/auth/GithubSVG";
+import GoogleColoredSVG from "@/public/auth/GoogleColoredSVG";
 
 const ProvidersButtons = ({ providers }: any) => (
   <Flex direction="column" w="100%">
@@ -58,7 +58,7 @@ const Background = ({ children }: any) => (
     flex="1 1 auto"
     justifyContent="center"
     alignItems="center"
-    backgroundImage="url('/blue-bubbles.svg')"
+    backgroundImage="url('/auth/bg-blue-bubbles.svg')"
     backgroundSize="cover"
     backgroundRepeat="no-repeat"
     backgroundPosition="center"
