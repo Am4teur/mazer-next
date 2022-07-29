@@ -1,8 +1,15 @@
+import { Box } from "@chakra-ui/react";
+
 const Footer = () => {
   return (
-    <footer className="flex justify-center border-t-4 bg-gray-500">
+    <Box
+      as="footer"
+      display="flex"
+      justifyContent="center"
+      backgroundColor={"gray.500"}
+    >
       Footer
-    </footer>
+    </Box>
   );
 };
 
