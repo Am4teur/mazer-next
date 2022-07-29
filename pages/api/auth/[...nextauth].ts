@@ -1,12 +1,12 @@
+import dbConnect from "@/lib/dbConnect";
+import clientPromise from "@/lib/mongodb";
+import User from "@/models/User";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import { compare } from "bcrypt";
 import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
-import dbConnect from "@/lib/dbConnect";
-import User from "@/models/User";
-import { compare } from "bcrypt";
 
 const GOOGLE_ID = process.env.GOOGLE_ID ? process.env.GOOGLE_ID : "WRONG_ID";
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET

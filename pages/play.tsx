@@ -1,32 +1,14 @@
-import { useEffect } from "react";
-import NextLink from "next/link";
-import { useSession, signIn } from "next-auth/react";
 import Playground from "@/components/Playground";
-import Router from "next/router";
-// import { GetStaticProps, GetStaticPaths, GetServerSideProps } from "next";
-// import unstable_getServerSession from "next-auth/next";
-// import authOptions from "./api/auth/[...nextauth]";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getSession, useSession } from "next-auth/react";
+import NextLink from "next/link";
 
 const Play = () => {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
 
-  // not very happy with this, because I would like to have a solution like the one
-  // on the Nextauth doc page (things that are commented)
-  // https://next-auth.js.org/tutorials/securing-pages-and-api-routes
-  const redirectToSignIn = () => {
-    const { pathname } = Router;
-    if (pathname === "/play") {
-      Router.push("/auth");
-    }
-  };
-
   if (isLoading) {
     return <h1>Loading...</h1>;
-  }
-
-  if (!session) {
-    redirectToSignIn();
   }
 
   return (
@@ -40,16 +22,28 @@ const Play = () => {
   );
 };
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   return {
-//     props: {
-//       session: await unstable_getServerSession(
-//         context.req, // why is this giving an error
-//         context.res,
-//         authOptions
-//       ),
-//     },
-//   };
-// };
+export const getServerSideProps: GetServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
+  // probably this will give an error when we go to production because of edge functions
+  // check: https://github.com/nextauthjs/next-auth/discussions/4265
+  // this also might be useful: https://github.com/nextauthjs/next-auth/issues/2612
+  // google search: 'nextauth incomingmessage' because
+  // ctx.req is of type incomingmessage & { cookies }
+  // but it should be of type NextApiRequest or similar
+  const session = await getSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: { destination: "/auth", permanent: false },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};
 
 export default Play;
