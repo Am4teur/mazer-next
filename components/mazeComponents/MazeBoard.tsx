@@ -1,13 +1,18 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { IPlayer } from "player";
+import { useRef, useState } from "react";
+import MovableIcon from "./MovableIcon";
 import Pokemon from "./Pokemon";
 
 interface IMazeBoard {
   children: JSX.Element;
 }
+
 interface IMazeGrid {
   players: IPlayer[];
 }
+
+type NullableJSXElement = JSX.Element | null | undefined;
 
 const MazeBackground = ({ children }: IMazeBoard) => (
   <Box
@@ -22,21 +27,24 @@ const MazeBackground = ({ children }: IMazeBoard) => (
     w="640px"
     h="640px"
     color="white"
+    //image-rendering: "pixalated"
   >
     {children}
   </Box>
 );
 
 const MazeGrid = ({ players }: IMazeGrid) => {
+  console.log(players);
+
   const sizeX: number = 10;
   const sizeY: number = 10;
-  const mazeGrid: (JSX.Element | null)[][] = Array.from(Array(sizeX), () =>
+  const mazeGrid: NullableJSXElement[][] = Array.from(Array(sizeX), () =>
     new Array(sizeY).fill(null)
   );
 
   players.forEach((player: IPlayer) => {
     const { x, y, iconId } = player;
-    mazeGrid[y][x] = <Pokemon id={iconId} />;
+    mazeGrid[y][x] = player.ref;
   });
 
   return (
@@ -46,9 +54,11 @@ const MazeGrid = ({ players }: IMazeGrid) => {
       templateColumns="repeat(10, 1fr)"
       templateRows="repeat(10, 1fr)"
     >
-      {mazeGrid.map((row: (JSX.Element | null)[], idx1: number) =>
-        row.map((element: JSX.Element | null, idx2: number) => (
-          <GridItem key={"" + idx2 + idx1}>{element ? element : null}</GridItem>
+      {mazeGrid.map((row: NullableJSXElement[], rowIdx: number) =>
+        row.map((element: NullableJSXElement, colIdx: number) => (
+          <GridItem key={"" + rowIdx + colIdx}>
+            {element ? element : null}
+          </GridItem>
         ))
       )}
     </Grid>
@@ -56,10 +66,27 @@ const MazeGrid = ({ players }: IMazeGrid) => {
 };
 
 const MazeBoard = () => {
-  const players: IPlayer[] = [
-    { userId: "id123", username: "daniel", x: 2, y: 1, iconId: 1 },
-    { userId: "id123", username: "daniel", x: 3, y: 2, iconId: 4 },
+  const playersData = [
+    {
+      userId: "id123",
+      username: "daniel",
+      x: 2,
+      y: 1,
+      iconId: 9,
+      ref: <MovableIcon iconId={9} />,
+    },
+    {
+      userId: "id123",
+      username: "daniel",
+      x: 3,
+      y: 2,
+      iconId: 4,
+      ref: <Pokemon pokemonId={4} />,
+    },
   ];
+
+  const playersRef = useRef(playersData);
+  const [players, setPlayers] = useState(playersRef.current);
 
   return (
     <>
