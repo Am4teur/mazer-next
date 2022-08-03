@@ -10,7 +10,7 @@ interface IMazeBoard {
 }
 
 interface IMazeGrid {
-  players: IPlayer[];
+  players: Map<string, IPlayer>;
   currentUserId: string;
 }
 
@@ -49,7 +49,7 @@ const MazeGrid = ({ players, currentUserId }: IMazeGrid) => {
     );
   };
 
-  players.forEach((player: IPlayer) => {
+  Object.values(players).forEach((player: IPlayer) => {
     const { x, y } = player;
     mazeGrid[y][x] = [...mazeGrid[y][x], getIconRef(player)];
   });
