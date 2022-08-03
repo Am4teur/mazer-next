@@ -1,4 +1,5 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 import { IPlayer } from "player";
 import { useRef, useState } from "react";
 import MovableIcon from "./MovableIcon";
@@ -10,9 +11,8 @@ interface IMazeBoard {
 
 interface IMazeGrid {
   players: IPlayer[];
+  currentUserId: string;
 }
-
-type NullableJSXElement = JSX.Element | null | undefined;
 
 const MazeBackground = ({ children }: IMazeBoard) => (
   <Box
@@ -33,18 +33,25 @@ const MazeBackground = ({ children }: IMazeBoard) => (
   </Box>
 );
 
-const MazeGrid = ({ players }: IMazeGrid) => {
-  console.log(players);
-
+const MazeGrid = ({ players, currentUserId }: IMazeGrid) => {
   const sizeX: number = 10;
   const sizeY: number = 10;
-  const mazeGrid: NullableJSXElement[][] = Array.from(Array(sizeX), () =>
-    new Array(sizeY).fill(null)
+  const mazeGrid: JSX.Element[][][] = Array.from(Array(sizeX), () =>
+    new Array(sizeY).fill([])
   );
 
+  const getIconRef = (player: IPlayer): JSX.Element => {
+    const { userId, iconId } = player;
+    return userId === currentUserId ? (
+      <MovableIcon iconId={iconId} />
+    ) : (
+      <Pokemon pokemonId={iconId} />
+    );
+  };
+
   players.forEach((player: IPlayer) => {
-    const { x, y, iconId } = player;
-    mazeGrid[y][x] = player.ref;
+    const { x, y } = player;
+    mazeGrid[y][x] = [...mazeGrid[y][x], getIconRef(player)];
   });
 
   return (
@@ -54,10 +61,12 @@ const MazeGrid = ({ players }: IMazeGrid) => {
       templateColumns="repeat(10, 1fr)"
       templateRows="repeat(10, 1fr)"
     >
-      {mazeGrid.map((row: NullableJSXElement[], rowIdx: number) =>
-        row.map((element: NullableJSXElement, colIdx: number) => (
+      {mazeGrid.map((row: JSX.Element[][], rowIdx: number) =>
+        row.map((playerIconList: JSX.Element[], colIdx: number) => (
           <GridItem key={"" + rowIdx + colIdx}>
-            {element ? element : null}
+            {playerIconList.map((playerIcon) =>
+              playerIcon ? playerIcon : null
+            )}
           </GridItem>
         ))
       )}
@@ -65,33 +74,16 @@ const MazeGrid = ({ players }: IMazeGrid) => {
   );
 };
 
-const MazeBoard = () => {
-  const playersData = [
-    {
-      userId: "id123",
-      username: "daniel",
-      x: 2,
-      y: 1,
-      iconId: 9,
-      ref: <MovableIcon iconId={9} />,
-    },
-    {
-      userId: "id123",
-      username: "daniel",
-      x: 3,
-      y: 2,
-      iconId: 4,
-      ref: <Pokemon pokemonId={4} />,
-    },
-  ];
-
-  const playersRef = useRef(playersData);
+const MazeBoard = ({ maze }: any) => {
+  const playersRef = useRef(maze.players);
   const [players, setPlayers] = useState(playersRef.current);
+  const { data: session } = useSession();
+  const currentUserId = session?.user.id || "";
 
   return (
     <>
       <MazeBackground>
-        <MazeGrid players={players}></MazeGrid>
+        <MazeGrid players={players} currentUserId={currentUserId}></MazeGrid>
       </MazeBackground>
     </>
   );

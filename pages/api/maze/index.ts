@@ -1,9 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@/lib/dbConnect";
 import Maze, { IMaze } from "@/models/Maze";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 interface MazeData {
-  mazes: IMaze[] | null;
+  maze: IMaze | {};
+  mazes?: IMaze[] | null;
   error?: string;
 }
 
@@ -18,14 +19,14 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const mazes = await Maze.find();
-        return res.status(200).json({ mazes: mazes });
+        const maze = await Maze.findById("62ea92934373151e62bee566");
+        return res.status(200).json({ maze: maze });
       } catch (error: any) {
-        return res.status(400).json({ mazes: null, error: error.toString() });
+        return res.status(400).json({ maze: {}, error: error.toString() });
       }
     default:
       return res
         .status(400)
-        .json({ mazes: null, error: "!method type not allowed" });
+        .json({ maze: {}, error: "!method type not allowed" });
   }
 }

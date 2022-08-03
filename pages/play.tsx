@@ -3,7 +3,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession, useSession } from "next-auth/react";
 import NextLink from "next/link";
 
-const Play = () => {
+const Play = ({ maze }: any) => {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
 
@@ -17,7 +17,7 @@ const Play = () => {
       <NextLink href="/" passHref>
         <button>Home</button>
       </NextLink>
-      <Playground />
+      <Playground maze={maze} />
     </>
   );
 };
@@ -39,11 +39,17 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
-  return {
-    props: {
-      session,
-    },
-  };
+  const { maze, error } = await (
+    await fetch(`${process.env.NEXTAUTH_URL}api/maze`)
+  ).json();
+
+  return error
+    ? {
+        redirect: { destination: "/errorPage", permanent: false },
+      }
+    : {
+        props: { maze: maze },
+      };
 };
 
 export default Play;

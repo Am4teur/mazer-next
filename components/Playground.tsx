@@ -15,7 +15,7 @@ interface IUpdatePlayerMessage {
   message: string;
 }
 
-const Playground = () => {
+const Playground = ({ maze }: any) => {
   const channel: any = useRef();
   const { data: session } = useSession();
   const username = session?.user.username || "";
@@ -136,7 +136,7 @@ const Playground = () => {
     <>
       <button onClick={publish}>publish</button>
       <button onClick={getMazes}>get mazes</button>
-      <MazeBoard />
+      <MazeBoard maze={maze} />
     </>
   );
 };
