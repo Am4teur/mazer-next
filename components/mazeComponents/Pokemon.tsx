@@ -13,7 +13,7 @@ const Pokemon = ({ h = 64, w = 64, pokemonId }: IPokemon) => {
   const isIdAvailable = pokemonId > 0 && pokemonId < 11; // 184 or 200
 
   return isIdAvailable ? (
-    <Box h={`${h}px`} w={`${w}px`}>
+    <Box h={`${h}px`} w={`${w}px`} position="absolute">
       <NextImage
         src={`/pokemonArt/Imgur Album Gen 1 All Forms Pixel Art 800x800/${pokemonId}.png`}
         height={h}

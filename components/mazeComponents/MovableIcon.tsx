@@ -71,7 +71,7 @@ const MovableIcon = ({
       h={`${h}px`}
       w={`${w}px`}
       zIndex={10}
-      position="relative"
+      position="absolute"
       animate={{ x: posX, y: posY }}
       transition={{ type: "tween" }}
     >
