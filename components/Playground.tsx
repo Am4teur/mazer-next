@@ -1,9 +1,8 @@
-import { useEffect, useRef } from "react";
-import { Observable } from "rxjs";
-import Ably from "ably";
-import { useSession } from "next-auth/react";
 import MazeBoard from "@/components/mazeComponents/MazeBoard";
+import Ably from "ably";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef } from "react";
 
 interface IPlayer {
   userId: string;
@@ -17,28 +16,26 @@ interface IUpdatePlayerMessage {
 }
 
 const Playground = () => {
-  let channel: any = useRef();
+  const channel: any = useRef();
   const { data: session } = useSession();
-  const username = session?.user.username || "usernameUndefined";
+  const username = session?.user.username || "";
 
   // players
   // maze
   // playerRef
 
   useEffect(() => {
-    const apiKey = "cGXDyw.jI8wvQ:E7ffJDCpfI_05hiC6iqWDcebOllI9o7Gm5J14nsPp2Q";
-    const ably = new Ably.Realtime({
-      key: apiKey,
-      clientId: username,
-    }); // use authentication... still need to fully understand and investigate a bit more
+    const ablyClient = new Ably.Realtime.Promise({
+      authUrl: `/api/createTokenRequest?${session?.user.id}`,
+    });
 
-    ably.connection.on("connected", () => {
+    ablyClient.connection.on("connected", () => {
       // successfully connected to Ably, not a channel
       console.log("Connected to Ably!");
     });
 
     // get/connect to channel "mazer"
-    channel.current = ably.channels.get("maze:<mazeId>");
+    channel.current = ablyClient.channels.get("maze:<mazeId>");
 
     // subscribe to channel named "maze123", to receive and send messages to the channel
     channel.current.subscribe("update-player", (message: any) => {
@@ -93,9 +90,9 @@ const Playground = () => {
     });
 
     return () => {
-      channel.current.detach();
+      channel.current.detach(() => console.log("Disconnected from Ably!"));
     };
-  }, [session, username]);
+  }, [session]);
 
   const publish = () => {
     const player: IPlayer = {
