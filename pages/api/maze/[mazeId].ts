@@ -14,19 +14,24 @@ export default async function handler(
 ) {
   await dbConnect();
 
-  const { method } = req;
+  const {
+    query: { mazeId },
+    method,
+  } = req;
 
   switch (method) {
     case "GET":
       try {
-        const maze = await Maze.findById("62ea92934373151e62bee566");
+        const maze = await Maze.findById(mazeId);
         return res.status(200).json({ maze: maze });
       } catch (error: any) {
         return res.status(400).json({ maze: {}, error: error.toString() });
       }
     default:
-      return res
-        .status(400)
-        .json({ maze: {}, error: "!method type not allowed" });
+      res.setHeader("Allow", ["GET"]);
+      res.status(405).end(`!Method ${method} Not Allowed`);
+    // return res
+    //   .status(400)
+    //   .json({ maze: {}, error: "!method type not allowed" });
   }
 }

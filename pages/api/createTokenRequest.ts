@@ -5,12 +5,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Ably.Types.TokenRequest>
 ) {
-  let { clientId } = req.query;
-  clientId = Array.isArray(clientId) ? clientId[0] : clientId;
+  let { userId } = req.query;
+  userId = Array.isArray(userId) ? userId[0] : userId;
 
   const client = new Ably.Realtime(process.env.ABLY_API_KEY!);
   const tokenRequestData = await client.auth.createTokenRequest({
-    clientId: clientId,
+    clientId: userId,
   });
 
   return res.status(200).json(tokenRequestData);

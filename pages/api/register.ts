@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
-import nodemailer from "nodemailer";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import type { NextApiRequest, NextApiResponse } from "next";
+import nodemailer from "nodemailer";
 
 interface ResponseData {
   token?: string;
@@ -91,10 +91,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  if (req.method !== "POST") {
-    return res
-      .status(200)
-      .json({ msg: "This API call only accepts POST methods" });
+  const { method } = req;
+
+  if (method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).end(`!Method ${method} Not Allowed`);
   }
 
   const { username, email, password } = req.body;

@@ -19,6 +19,7 @@ const Playground = ({ maze }: any) => {
   const channel: any = useRef();
   const { data: session } = useSession();
   const username = session?.user.username || "";
+  const userId = session?.user.id || "";
 
   // players
   // maze
@@ -26,7 +27,7 @@ const Playground = ({ maze }: any) => {
 
   useEffect(() => {
     const ablyClient = new Ably.Realtime.Promise({
-      authUrl: `/api/createTokenRequest?${session?.user.id}`,
+      authUrl: `/api/createTokenRequest?userId=${userId}`,
     });
 
     ablyClient.connection.on("connected", () => {

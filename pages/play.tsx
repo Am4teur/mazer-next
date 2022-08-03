@@ -39,8 +39,10 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
+  // @TODO remove hardcoded global mazeId
+  const mazeId = "62ea92934373151e62bee566";
   const { maze, error } = await (
-    await fetch(`${process.env.NEXTAUTH_URL}api/maze`)
+    await fetch(`${process.env.NEXTAUTH_URL}api/maze/${mazeId}`)
   ).json();
 
   return error
