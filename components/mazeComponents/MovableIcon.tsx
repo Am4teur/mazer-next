@@ -13,6 +13,7 @@ interface IMovableIcon {
   h?: number;
   w?: number;
   iconId: number;
+  publish: number;
 }
 
 const MotionBox = chakra(motion.div, {
@@ -30,6 +31,7 @@ const MovableIcon = ({
   h = 64,
   w = 64,
   iconId,
+  publish,
 }: IMovableIcon) => {
   const [posX, setPosX] = useState(startX);
   const [posY, setPosY] = useState(startY);

@@ -1,15 +1,26 @@
-import Playground from "@/components/Playground";
+import MazeBoard from "@/components/mazeComponents/MazeBoard";
+import axios from "axios";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import NextLink from "next/link";
 
 const Play = ({ maze }: any) => {
-  const { data: session, status } = useSession();
-  const isLoading = status === "loading";
-
-  if (isLoading) {
-    return <h1>Loading...</h1>;
-  }
+  // @TODO temporary getMazes just for testing, delete later
+  const getMazes = async () => {
+    await axios
+      .get(`${"/api/maze"}/`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then(async (res) => {
+        console.log(res.data.mazes);
+      })
+      .catch((error) => {
+        console.error("My error on maze.ts: " + error);
+      });
+  };
 
   return (
     <>
@@ -17,7 +28,8 @@ const Play = ({ maze }: any) => {
       <NextLink href="/" passHref>
         <button>Home</button>
       </NextLink>
-      <Playground maze={maze} />
+      <button onClick={getMazes}>get mazes</button>
+      <MazeBoard maze={maze} />
     </>
   );
 };
