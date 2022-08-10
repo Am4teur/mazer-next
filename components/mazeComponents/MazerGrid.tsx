@@ -21,9 +21,9 @@ const MazeGrid = ({ players, publish }: IMazeGrid) => {
   const getIconRef = (player: IPlayer): JSX.Element => {
     const { userId: playerUserId, iconId } = player;
     return playerUserId === userId ? (
-      <MovableIcon iconId={iconId} publish={publish} />
+      <MovableIcon key={player.userId} iconId={iconId} publish={publish} />
     ) : (
-      <Pokemon pokemonId={iconId} />
+      <Pokemon key={player.userId} pokemonId={iconId} />
     );
   };
 
