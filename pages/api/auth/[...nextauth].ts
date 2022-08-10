@@ -97,7 +97,8 @@ export default NextAuth({
 
         const filter = { email: user.email };
         const update = {
-          username: user.name,
+          id: user._id,
+          username: user.username,
           email: user.email,
           image: user.image,
           emailVerified: true,
@@ -105,6 +106,17 @@ export default NextAuth({
           score: user.score || 0,
           // type: account.provider,
         };
+        // auth  {
+        //   score: 0,
+        //   _id: new ObjectId("62754c1afac16fc8b56cf4e0"),
+        //   username: 'asd',
+        //   email: 'sidir63815@angeleslid.com',
+        //   hashedPassword: '$2b$12$wgJC/0zUknDrWZrEXmwJZuX8j2vKpTA2Ij/xhsWdLGJDJj4iM7TN.',
+        //   image: 'default_image',
+        //   emailVerified: false,
+        //   mazes: [],
+        //   __v: 0
+        // }
 
         await User.findOneAndUpdate(filter, update, {
           new: true,
@@ -120,13 +132,21 @@ export default NextAuth({
           mazes: user.mazes || [],
           score: user.score || 0,
         };
+        // auth  {
+        //   id: '629e00d21ad5de305920b9cc',
+        //   name: 'Daniel Castro',
+        //   email: 'daniel.7c.n12@gmail.com',
+        //   image: 'https://avatars.githubusercontent.com/u/20971226?v=4',
+        //   emailVerified: true,
+        //   mazes: [],
+        //   score: 0,
+        //   username: 'Daniel Castro'
+        // }
 
         return token;
       };
 
-      if (user) {
-        token = user?.username ? getOldUser(user) : updateNewUser(user);
-      }
+      if (user) token = user?.username ? getOldUser(user) : updateNewUser(user);
 
       return token;
     },
