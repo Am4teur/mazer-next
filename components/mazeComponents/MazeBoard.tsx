@@ -32,7 +32,9 @@ const MazeBoard = ({ maze }: any) => {
   const playersRef = useRef(maze.players);
   const [players, setPlayers] = useState(playersRef.current);
   const { data: session } = useSession();
-  const userId = session?.user.id || "";
+  // @TODO remove this ts ignore, when we login with email, we need to get the _id
+  // @ts-ignore
+  const userId = session?.user.id || session?.user._id || "";
 
   //
   //

@@ -8,10 +8,18 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
-const GOOGLE_ID = process.env.GOOGLE_ID ? process.env.GOOGLE_ID : "WRONG_ID";
+const GOOGLE_ID = process.env.GOOGLE_ID
+  ? process.env.GOOGLE_ID
+  : "WRONG_GOOGLE_ID";
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET
   ? process.env.GOOGLE_SECRET
-  : "WRONG_SECRET";
+  : "WRONG_GOOGLE_SECRET";
+const GITHUB_ID = process.env.GITHUB_ID
+  ? process.env.GITHUB_ID
+  : "WRONG_GITHUB_ID";
+const GITHUB_SECRET = process.env.GITHUB_SECRET
+  ? process.env.GITHUB_SECRET
+  : "WRONG_GITHUB_SECRET";
 
 export default NextAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -33,8 +41,8 @@ export default NextAuth({
   debug: process.env.NODE_ENV === "development",
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
+      clientId: GITHUB_ID,
+      clientSecret: GITHUB_SECRET,
     }),
     GoogleProvider({
       clientId: GOOGLE_ID,
@@ -90,6 +98,17 @@ export default NextAuth({
       const getOldUser = (user: any) => {
         token.user = user;
         return token;
+        // user = {
+        //   score: 0,
+        //   _id: new ObjectId("62754c1afac16fc8b56cf4e0"),
+        //   username: 'asd',
+        //   email: 'sidir63815@angeleslid.com',
+        //   hashedPassword: '$2b$12$wgJC/0zUknDrWZrEXmwJZuX8j2vKpTA2Ij/xhsWdLGJDJj4iM7TN.',
+        //   image: 'default_image',
+        //   emailVerified: false,
+        //   mazes: [],
+        //   __v: 0
+        // }
       };
 
       const updateNewUser = async (user: any) => {
@@ -106,17 +125,6 @@ export default NextAuth({
           score: user.score || 0,
           // type: account.provider,
         };
-        // auth  {
-        //   score: 0,
-        //   _id: new ObjectId("62754c1afac16fc8b56cf4e0"),
-        //   username: 'asd',
-        //   email: 'sidir63815@angeleslid.com',
-        //   hashedPassword: '$2b$12$wgJC/0zUknDrWZrEXmwJZuX8j2vKpTA2Ij/xhsWdLGJDJj4iM7TN.',
-        //   image: 'default_image',
-        //   emailVerified: false,
-        //   mazes: [],
-        //   __v: 0
-        // }
 
         await User.findOneAndUpdate(filter, update, {
           new: true,
@@ -132,7 +140,7 @@ export default NextAuth({
           mazes: user.mazes || [],
           score: user.score || 0,
         };
-        // auth  {
+        // token = {
         //   id: '629e00d21ad5de305920b9cc',
         //   name: 'Daniel Castro',
         //   email: 'daniel.7c.n12@gmail.com',
@@ -146,6 +154,7 @@ export default NextAuth({
         return token;
       };
 
+      // this is between an email (getOldUser) and a provider (updateNewUser)
       if (user) token = user?.username ? getOldUser(user) : updateNewUser(user);
 
       return token;
