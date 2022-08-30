@@ -1,38 +1,19 @@
 import MazeBoard from "@/components/mazeComponents/MazeBoard";
-import axios from "axios";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import NextLink from "next/link";
 
-const Play = ({ maze }: any) => {
-  // @TODO temporary getMazes just for testing, delete later
-  const getMazes = async () => {
-    await axios
-      .get(`${"/api/maze"}/`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then(async (res) => {
-        console.log(res.data.mazes);
-      })
-      .catch((error) => {
-        console.error("My error on maze.ts: " + error);
-      });
-  };
-
-  return (
-    <>
-      <h1>Play</h1>
-      <NextLink href="/" passHref>
-        <button>Home</button>
-      </NextLink>
-      <button onClick={getMazes}>get mazes</button>
-      <MazeBoard maze={maze} />
-    </>
-  );
-};
+const Play = ({ maze }: any) => (
+  <>
+    <h1>Play</h1>
+    <NextLink href="/" passHref>
+      <button>Home</button>
+    </NextLink>
+    <button onClick={() => console.log(maze)}>get mazes</button>
+    {/* // @TODO encapsulate MazeBoard in an Ably to avoid rerenders of aAbly when rerendereing players */}
+    <MazeBoard maze={maze} />
+  </>
+);
 
 export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext
