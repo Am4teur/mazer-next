@@ -1,7 +1,12 @@
 import MazeBoard from "@/components/mazeComponents/MazeBoard";
+import { configureAbly } from "@ably-labs/react-hooks";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import NextLink from "next/link";
+
+configureAbly({
+  authUrl: `${process.env.URL_DEV}/api/createTokenRequest`,
+});
 
 const Play = ({ maze }: any) => (
   <>
@@ -10,7 +15,6 @@ const Play = ({ maze }: any) => (
       <button>Home</button>
     </NextLink>
     <button onClick={() => console.log(maze)}>get mazes</button>
-    {/* // @TODO encapsulate MazeBoard in an Ably to avoid rerenders of aAbly when rerendereing players */}
     <MazeBoard maze={maze} />
   </>
 );

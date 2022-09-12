@@ -7,6 +7,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+/* @TODO update next-auth package/library to latest version because the bug of 4.5 is fixed on 4.10, I think */
 
 const GOOGLE_ID = process.env.GOOGLE_ID
   ? process.env.GOOGLE_ID
@@ -21,7 +22,7 @@ const GITHUB_SECRET = process.env.GITHUB_SECRET
   ? process.env.GITHUB_SECRET
   : "WRONG_GITHUB_SECRET";
 
-export default NextAuth({
+export const authOptions: any = {
   adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: "jwt",
@@ -167,4 +168,6 @@ export default NextAuth({
       return session;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);

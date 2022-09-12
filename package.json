@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ably-labs/react-hooks": "^2.0.9",
     "@chakra-ui/react": "^1.8.6",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",

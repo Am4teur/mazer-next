@@ -1,7 +1,7 @@
+import Button from "@/components/basics/Button";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
-import Button from "@/components/basics/Button";
 
 const Home: NextPage = () => {
   return (
