@@ -1,8 +1,6 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
 import { IPlayer } from "player";
 import MovableIcon from "./MovableIcon";
-import Pokemon from "./Pokemon";
 
 interface IMazeGrid {
   players: Map<string, IPlayer>;
@@ -15,21 +13,16 @@ const MazeGrid = ({ players, publish }: IMazeGrid) => {
   const mazeGrid: JSX.Element[][][] = Array.from(Array(sizeX), () =>
     new Array(sizeY).fill([])
   );
-  const { data: session } = useSession();
-  const userId = session?.user.id || "";
 
-  const getIconRef = (player: IPlayer): JSX.Element => {
-    const { userId: playerUserId, iconId } = player;
-    return playerUserId === userId ? (
-      <MovableIcon key={player.userId} iconId={iconId} publish={publish} />
-    ) : (
-      <Pokemon key={player.userId} pokemonId={iconId} />
-    );
-  };
-
-  Object.values(players).forEach((player: IPlayer) => {
+  Object.values(players).forEach((player: any) => {
     const { x, y } = player;
-    mazeGrid[y][x] = [...mazeGrid[y][x], getIconRef(player)];
+    console.log(x, y);
+    console.log(mazeGrid[y][x]);
+
+    mazeGrid[y][x] = [
+      ...mazeGrid[y][x],
+      <MovableIcon key={player.userId} player={player} publish={publish} />,
+    ];
   });
 
   return (
