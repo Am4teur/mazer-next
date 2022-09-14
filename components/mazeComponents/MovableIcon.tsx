@@ -1,6 +1,8 @@
 import { chakra } from "@chakra-ui/react";
 import { isValidMotionProp, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { IPlayer } from "player";
+import { useEffect } from "react";
 import { fromEvent } from "rxjs";
 import Pokemon from "./Pokemon";
 
@@ -12,8 +14,8 @@ interface IMovableIcon {
   stepSize?: number;
   h?: number;
   w?: number;
-  iconId: number;
-  publish: number;
+  player: IPlayer;
+  publish: (updatedPlayer: IPlayer) => {};
 }
 
 const MotionBox = chakra(motion.div, {
@@ -25,48 +27,74 @@ const MotionBox = chakra(motion.div, {
 });
 
 const MovableIcon = ({
-  startX = 0,
-  startY = 0,
   stepSize = DEFAULT_STEP_SIZE,
   h = 64,
   w = 64,
-  iconId,
+  player,
   publish,
 }: IMovableIcon) => {
-  const [posX, setPosX] = useState(startX);
-  const [posY, setPosY] = useState(startY);
+  const { data: session } = useSession();
+  // @TODO remove this ts ignore, when we login with email, we need to get the _id
+  // @ts-ignore
+  const userId = session?.user.id || session?.user._id || "";
 
   useEffect(() => {
     const handleKeyDown = (e: any) => {
-      const { key } = e;
-      switch (key) {
+      e.preventDefault();
+
+      let updatedPlayer = {
+        ...player,
+        prevX: player.x,
+        prevY: player.y,
+        x: player.x,
+        y: player.y,
+      };
+
+      switch (e.key) {
         case "ArrowLeft":
         case "a":
-          setPosX((prevX) => prevX - stepSize);
+          updatedPlayer = { ...updatedPlayer, x: player.x - 1 };
           break;
         case "ArrowUp":
         case "w":
-          setPosY((prevY) => prevY - stepSize);
+          updatedPlayer = { ...updatedPlayer, y: player.y - 1 };
           break;
         case "ArrowRight":
         case "d":
-          setPosX((prevX) => prevX + stepSize);
+          updatedPlayer = { ...updatedPlayer, x: player.x + 1 };
           break;
         case "ArrowDown":
         case "s":
-          setPosY((prevY) => prevY + stepSize);
+          updatedPlayer = { ...updatedPlayer, y: player.y + 1 };
           break;
         default:
           break;
       }
+      if (
+        // only publish/update when player was really updated
+        updatedPlayer.prevX !== updatedPlayer.x ||
+        updatedPlayer.prevY !== updatedPlayer.y
+      ) {
+        publish(updatedPlayer);
+      }
     };
 
-    var ev = fromEvent(document, "keydown").subscribe(handleKeyDown);
+    if (userId === player.userId) {
+      var eventsSubscription = fromEvent(document, "keydown").subscribe(
+        handleKeyDown
+      );
+    }
 
     return () => {
-      ev.unsubscribe();
+      if (userId === player.userId) {
+        eventsSubscription.unsubscribe();
+      }
     };
-  }, [setPosX, setPosY, stepSize]);
+  }, [publish, player, userId]);
+
+  const getInitialCoord = (prevPos: number, pos: number) => {
+    return (prevPos - pos) * stepSize;
+  };
 
   return (
     <MotionBox
@@ -74,10 +102,17 @@ const MovableIcon = ({
       w={`${w}px`}
       zIndex={10}
       position="absolute"
-      animate={{ x: posX, y: posY }}
+      initial={{
+        x: getInitialCoord(player.prevX, player.x),
+        y: getInitialCoord(player.prevY, player.y),
+      }}
+      animate={{
+        x: 0,
+        y: 0,
+      }}
       transition={{ type: "tween" }}
     >
-      <Pokemon h={h} w={w} pokemonId={iconId} />
+      <Pokemon h={h} w={w} pokemonId={player.iconId} />
     </MotionBox>
   );
 };
