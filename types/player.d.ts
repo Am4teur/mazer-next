@@ -4,6 +4,8 @@ declare module "player" {
     username: string;
     x: number;
     y: number;
+    prevX: number;
+    prevY: number;
     iconId: number;
   }
 }
