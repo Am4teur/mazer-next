@@ -14,11 +14,8 @@ const MazeGrid = ({ players, publish }: IMazeGrid) => {
     new Array(sizeY).fill([])
   );
 
-  Object.values(players).forEach((player: any) => {
+  Object.values(players).forEach((player: IPlayer) => {
     const { x, y } = player;
-    console.log(x, y);
-    console.log(mazeGrid[y][x]);
-
     mazeGrid[y][x] = [
       ...mazeGrid[y][x],
       <MovableIcon key={player.userId} player={player} publish={publish} />,

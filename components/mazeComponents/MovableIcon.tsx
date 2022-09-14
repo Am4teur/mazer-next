@@ -103,7 +103,7 @@ const MovableIcon = ({
       zIndex={10}
       position="absolute"
       initial={{
-        x: getInitialCoord(player.prevX, player.x),
+        x: getInitialCoord(player.prevX, player.x), // TODO test if the animation is the problem for the double key press (top and left for example)
         y: getInitialCoord(player.prevY, player.y),
       }}
       animate={{
