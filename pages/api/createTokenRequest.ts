@@ -22,9 +22,15 @@ export default async function handler(
       );
   }
 
+  // @TODO remove this ts ignore, when we login with email, we need to get the _id
+  // @ts-ignore
+  const userId = session?.user.id || session?.user._id || "";
+
   const client = new Ably.Realtime(process.env.ABLY_SERVER_API_KEY!);
   const tokenRequestData = await client.auth.createTokenRequest({
-    clientId: session.user.email,
+    // @TODO either remove user.id or if I want to use the user.id, I need to consider user._id or fix this bug
+    // @ts-ignore
+    clientId: session.user.email + " " + userId,
   });
 
   return res.status(200).json(tokenRequestData);
