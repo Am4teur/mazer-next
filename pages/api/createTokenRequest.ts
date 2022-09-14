@@ -26,6 +26,10 @@ export default async function handler(
   // @ts-ignore
   const userId = session?.user.id || session?.user._id || "";
 
+  if (!process.env.ABLY_SERVER_API_KEY) {
+    throw new Error("process.env.ABLY_SERVER_API_KEY is undefined");
+  }
+
   const client = new Ably.Realtime(process.env.ABLY_SERVER_API_KEY!);
   const tokenRequestData = await client.auth.createTokenRequest({
     // @TODO either remove user.id or if I want to use the user.id, I need to consider user._id or fix this bug
