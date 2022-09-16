@@ -21,14 +21,7 @@ export default async function handler(
     return res.status(405).end(`!Method ${method} Not Allowed`);
   }
 
-  const { player, mazeId } = req.body;
-  console.log("mazeId", mazeId);
-
-  // DONE add a way to update the players from maze
-  //   DONE update players logic because now it is not an array, it is a map of objects
-  // --> update players async
-  // use ably to update current board
-  // test with 2 tabs
+  const { mazeId, player } = req.body;
 
   try {
     const query = { _id: mazeId };

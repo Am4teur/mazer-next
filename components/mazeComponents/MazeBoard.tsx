@@ -76,19 +76,14 @@ const MazeBoard = ({ maze }: any) => {
     // @TODO remove hardcoded global mazeId
     const mazeId = "62ea92934373151e62bee566";
 
-    // fetch(`api/maze/updatePlayer`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     mazeId: mazeId,
-    //     userId: userId,
-    //     x: x,
-    //     y: y,
-    //     // player: updatedPlayer, TODO
-    //   }),
-    // });
+    fetch(`api/maze/updatePlayer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mazeId: mazeId,
+        player: updatedPlayer,
+      }),
+    });
 
     await fetch("/api/publish", {
       method: "POST",
