@@ -3,21 +3,34 @@ import { configureAbly } from "@ably-labs/react-hooks";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import NextLink from "next/link";
+import { IPlayer } from "player";
 
 configureAbly({
   authUrl: `${process.env.URL_DEV}/api/createTokenRequest`,
 });
 
-const Play = ({ maze }: any) => (
-  <>
-    <h1>Play</h1>
-    <NextLink href="/" passHref>
-      <button>Home</button>
-    </NextLink>
-    <button onClick={() => console.log(maze)}>get mazes</button>
-    <MazeBoard maze={maze} />
-  </>
-);
+const Play = ({ maze }: any) => {
+  let playersMap: Map<string, IPlayer> = new Map<string, IPlayer>(
+    Object.entries(maze.players)
+  );
+  const newMaze = {
+    ...maze,
+    players: playersMap,
+  };
+  console.log(maze.players);
+  console.log(playersMap);
+
+  return (
+    <>
+      <h1>Play</h1>
+      <NextLink href="/" passHref>
+        <button>Home</button>
+      </NextLink>
+      <button onClick={() => console.log(maze)}>get mazes</button>
+      <MazeBoard maze={newMaze} />
+    </>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext

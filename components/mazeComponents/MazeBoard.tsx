@@ -2,7 +2,8 @@ import { useChannel } from "@ably-labs/react-hooks";
 import { Box, Heading } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { IPlayer } from "player";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { fromEvent } from "rxjs";
 import MazeGrid from "./MazerGrid";
 import OfflinePlayers from "./OfflinePlayers";
 import OnlinePlayers from "./OnlinePlayers";
@@ -31,7 +32,6 @@ const MazeBackground = ({ children }: IMazeBoard) => (
 );
 
 const MazeBoard = ({ maze }: any) => {
-  const playersRef = useRef(maze.players);
   // @TODO players should be a Map and not an object
   // Map's can be iterable and are organized
   // Map's support non string keys, whereas objects only support string keys
@@ -45,17 +45,31 @@ const MazeBoard = ({ maze }: any) => {
   // ])
   // Map's has myMap.set("userId1": {id: 1, something: "yea1"}), whereas objects myObj[key]
   // Map's can also be ...myMap
-  const [players, setPlayers] = useState(playersRef.current);
+  const [players, setPlayers] = useState<Map<string, IPlayer>>(maze.players);
+  console.log(players);
+
   const { data: session } = useSession();
   // @TODO remove this ts ignore, when we login with email, we need to get the _id
   // @ts-ignore
   const userId = session?.user.id || session?.user._id || "";
 
+  const updatePlayer = (player: IPlayer) => {
+    const { userId, x, y } = player;
+    const newPlayers = new Map<string, IPlayer>(players);
+    newPlayers.set(userId, {
+      ...players.get(userId)!,
+      x,
+      y,
+    });
+
+    setPlayers(newPlayers);
+  };
+
   const [channel, ably] = useChannel("maze:<mazeId>", (message: any) => {
     receiveMessage(message);
   });
 
-  const publish = async (updatedPlayer: IPlayer) => {
+  const publish = useCallback(async (updatedPlayer: IPlayer) => {
     // @TODO remove hardcoded global mazeId
     const mazeId = "62ea92934373151e62bee566";
 
@@ -81,37 +95,79 @@ const MazeBoard = ({ maze }: any) => {
         updatedPlayer,
       }),
     });
-  };
+  }, []);
 
   const receiveMessage = (message: any) => {
-    const {
+    let {
+      data: { updatedPlayer },
+    }: {
       data: {
-        updatedPlayer: { userId: updatedPlayerId, prevX, prevY, x, y },
-      },
+        updatedPlayer: IPlayer;
+      };
     } = message;
 
-    if (updatedPlayerId === userId) {
+    if (updatedPlayer.userId === userId) {
       return;
     }
 
-    const newPlayers = { ...players };
-    newPlayers[updatedPlayerId] = {
-      ...newPlayers[updatedPlayerId],
-      prevX,
-      prevY,
-      x,
-      y,
+    updatePlayer(updatedPlayer);
+  };
+
+  useEffect(() => {
+    const player = players.get(userId);
+
+    if (!player) {
+      // TODO implement new player
+      return;
+    }
+
+    const handleKeyDown = (e: any) => {
+      e.preventDefault();
+
+      const updatedPlayer = { ...player };
+
+      switch (e.key) {
+        case "ArrowLeft":
+        case "a":
+          updatedPlayer.x -= 1;
+          break;
+        case "ArrowUp":
+        case "w":
+          updatedPlayer.y -= 1;
+          break;
+        case "ArrowRight":
+        case "d":
+          updatedPlayer.x += 1;
+          break;
+        case "ArrowDown":
+        case "s":
+          updatedPlayer.y += 1;
+          break;
+        default:
+          break;
+      }
+
+      if (updatedPlayer.x !== player.x || updatedPlayer.y !== player.y) {
+        publish(updatedPlayer);
+        updatePlayer(updatedPlayer);
+      }
     };
 
-    setPlayers(newPlayers);
-  };
+    var eventsSubscription = fromEvent(document, "keydown").subscribe(
+      handleKeyDown
+    );
+
+    return () => {
+      eventsSubscription.unsubscribe();
+    };
+  }, [publish, userId, players, updatePlayer]);
 
   return (
     <Box display="flex" gap="4rem">
       <Box display="flex" flexDirection="column" alignItems="center">
         <Heading>Game</Heading>
         <MazeBackground>
-          <MazeGrid players={players} publish={publish}></MazeGrid>
+          <MazeGrid players={players}></MazeGrid>
         </MazeBackground>
       </Box>
       <Box>
@@ -122,7 +178,7 @@ const MazeBoard = ({ maze }: any) => {
         <Box display="flex" flexDirection="column" alignItems="center">
           <Heading>Online Players</Heading>
         </Box>
-        <OfflinePlayers players={playersRef.current} />
+        <OfflinePlayers players={players} />
       </Box>
     </Box>
   );
