@@ -53,17 +53,20 @@ const MazeBoard = ({ maze }: any) => {
   // @ts-ignore
   const userId = session?.user.id || session?.user._id || "";
 
-  const updatePlayer = (player: IPlayer) => {
-    const { userId, x, y } = player;
-    const newPlayers = new Map<string, IPlayer>(players);
-    newPlayers.set(userId, {
-      ...players.get(userId)!,
-      x,
-      y,
-    });
+  const updatePlayer = useCallback(
+    (player: IPlayer) => {
+      const { userId, x, y } = player;
+      const newPlayers = new Map<string, IPlayer>(players);
+      newPlayers.set(userId, {
+        ...players.get(userId)!,
+        x,
+        y,
+      });
 
-    setPlayers(newPlayers);
-  };
+      setPlayers(newPlayers);
+    },
+    [players]
+  );
 
   const [channel, ably] = useChannel("maze:<mazeId>", (message: any) => {
     receiveMessage(message);
