@@ -5,7 +5,6 @@ const OnlinePlayers = () => {
   const ablyClient = assertConfiguration();
   const [presenceData] = usePresence("maze:<mazeId>");
 
-  console.log(presenceData);
   const OnlinePlayersList = presenceData.map((player, index) => {
     const isItMe = player.clientId === ablyClient.auth.clientId ? "(me)" : "";
 

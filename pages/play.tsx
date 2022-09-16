@@ -10,15 +10,10 @@ configureAbly({
 });
 
 const Play = ({ maze }: any) => {
-  let playersMap: Map<string, IPlayer> = new Map<string, IPlayer>(
-    Object.entries(maze.players)
-  );
   const newMaze = {
     ...maze,
-    players: playersMap,
+    players: new Map<string, IPlayer>(Object.entries(maze.players)),
   };
-  console.log(maze.players);
-  console.log(playersMap);
 
   return (
     <>

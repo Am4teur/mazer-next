@@ -46,8 +46,6 @@ const MazeBoard = ({ maze }: any) => {
   // Map's has myMap.set("userId1": {id: 1, something: "yea1"}), whereas objects myObj[key]
   // Map's can also be ...myMap
   const [players, setPlayers] = useState<Map<string, IPlayer>>(maze.players);
-  console.log(players);
-
   const { data: session } = useSession();
   // @TODO remove this ts ignore, when we login with email, we need to get the _id
   // @ts-ignore
@@ -76,14 +74,14 @@ const MazeBoard = ({ maze }: any) => {
     // @TODO remove hardcoded global mazeId
     const mazeId = "62ea92934373151e62bee566";
 
-    fetch(`api/maze/updatePlayer`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mazeId: mazeId,
-        player: updatedPlayer,
-      }),
-    });
+    // fetch(`api/maze/updatePlayer`, {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     mazeId: mazeId,
+    //     player: updatedPlayer,
+    //   }),
+    // });
 
     await fetch("/api/publish", {
       method: "POST",
@@ -174,7 +172,7 @@ const MazeBoard = ({ maze }: any) => {
         </Box>
         <OnlinePlayers />
         <Box display="flex" flexDirection="column" alignItems="center">
-          <Heading>Online Players</Heading>
+          <Heading>Offline Players</Heading>
         </Box>
         <OfflinePlayers players={players} />
       </Box>
