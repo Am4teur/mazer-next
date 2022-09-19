@@ -4,6 +4,8 @@ import { IPlayer } from "player";
 
 export interface IMaze {
   seed: String;
+  rows: number;
+  cols: number;
   players: Map<string, IPlayer>;
   owner: String;
   // coins: pos[] // [{x: 5, y: 5}, {x: 6, y: 7}]
@@ -12,6 +14,8 @@ export interface IMaze {
 
 const mazeSchema = new Schema<IMaze>({
   seed: String,
+  rows: Number,
+  cols: Number,
   players: {
     type: Map,
     of: {
