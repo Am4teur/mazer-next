@@ -1,27 +1,30 @@
-import { Box } from "@chakra-ui/react";
-import { IPlayer } from "player";
-import MovableIcon from "./MovableIcon";
+import { Node } from "@/objects/mazeUtils";
+import { Grid, GridItem } from "@chakra-ui/react";
+import MazeNode from "./MazeNode";
 
 interface IMazeGrid {
-  players: Map<string, IPlayer>;
+  generatedMazeGrid: Node[][];
 }
 
-const MazeGrid = ({ players }: IMazeGrid) => {
-  const sizeX: number = 10;
-  const sizeY: number = 10;
-  const mazeGrid: JSX.Element[][][] = Array.from(Array(sizeX), () =>
-    new Array(sizeY).fill([])
-  );
-
-  const playersRefs: JSX.Element[] = [];
-  players.forEach((player: IPlayer) => {
-    playersRefs.push(<MovableIcon key={player.userId} player={player} />);
-  });
-
+const MazeGrid = ({ generatedMazeGrid }: IMazeGrid) => {
   return (
-    <Box w="100%" h="100%">
-      {playersRefs}
-    </Box>
+    <>
+      <Grid
+        w="100%"
+        h="100%"
+        templateColumns="repeat(10, 1fr)"
+        templateRows="repeat(10, 1fr)"
+        gap={0}
+      >
+        {generatedMazeGrid.map((row: Node[], rowIdx: number) =>
+          row.map((node: Node, colIdx: number) => (
+            <GridItem key={"" + rowIdx + colIdx}>
+              <MazeNode node={node} />
+            </GridItem>
+          ))
+        )}
+      </Grid>
+    </>
   );
 };
 

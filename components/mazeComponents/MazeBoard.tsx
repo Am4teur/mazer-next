@@ -1,3 +1,4 @@
+import { generateMaze, Node } from "@/objects/mazeUtils";
 import { useChannel } from "@ably-labs/react-hooks";
 import { Box, Heading } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
@@ -5,6 +6,7 @@ import { IPlayer } from "player";
 import { useCallback, useEffect, useState } from "react";
 import { fromEvent } from "rxjs";
 import MazeGrid from "./MazerGrid";
+import MovableIcon from "./MovableIcon";
 import OfflinePlayers from "./OfflinePlayers";
 import OnlinePlayers from "./OnlinePlayers";
 
@@ -51,6 +53,8 @@ const MazeBoard = ({ maze }: any) => {
   // @ts-ignore
   const userId = session?.user.id || session?.user._id || "";
 
+  const generatedMazeGrid = generateMaze(maze.mazeSeed, maze.cols, maze.rows);
+
   const updatePlayer = useCallback(
     (player: IPlayer) => {
       const { userId, x, y } = player;
@@ -74,14 +78,14 @@ const MazeBoard = ({ maze }: any) => {
     // @TODO remove hardcoded global mazeId
     const mazeId = "62ea92934373151e62bee566";
 
-    // fetch(`api/maze/updatePlayer`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     mazeId: mazeId,
-    //     player: updatedPlayer,
-    //   }),
-    // });
+    fetch(`api/maze/updatePlayer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mazeId: mazeId,
+        player: updatedPlayer,
+      }),
+    });
 
     await fetch("/api/publish", {
       method: "POST",
@@ -109,6 +113,28 @@ const MazeBoard = ({ maze }: any) => {
     updatePlayer(updatedPlayer);
   };
 
+  const canMove = useCallback(
+    (direction: string, player: IPlayer) => {
+      type NodeKey = keyof Node;
+
+      const directionsMap: { [key: string]: string } = {
+        ArrowUp: "N",
+        w: "N",
+        ArrowRight: "E",
+        d: "E",
+        ArrowDown: "S",
+        s: "S",
+        ArrowLeft: "W",
+        a: "W",
+      };
+
+      return generatedMazeGrid[player.y][player.x][
+        directionsMap[direction] as NodeKey
+      ];
+    },
+    [generatedMazeGrid]
+  );
+
   useEffect(() => {
     const player = players.get(userId);
 
@@ -122,30 +148,32 @@ const MazeBoard = ({ maze }: any) => {
 
       const updatedPlayer = { ...player };
 
-      switch (e.key) {
-        case "ArrowLeft":
-        case "a":
-          updatedPlayer.x -= 1;
-          break;
-        case "ArrowUp":
-        case "w":
-          updatedPlayer.y -= 1;
-          break;
-        case "ArrowRight":
-        case "d":
-          updatedPlayer.x += 1;
-          break;
-        case "ArrowDown":
-        case "s":
-          updatedPlayer.y += 1;
-          break;
-        default:
-          break;
-      }
+      if (canMove(e.key, player)) {
+        switch (e.key) {
+          case "ArrowUp":
+          case "w":
+            updatedPlayer.y -= 1;
+            break;
+          case "ArrowRight":
+          case "d":
+            updatedPlayer.x += 1;
+            break;
+          case "ArrowDown":
+          case "s":
+            updatedPlayer.y += 1;
+            break;
+          case "ArrowLeft":
+          case "a":
+            updatedPlayer.x -= 1;
+            break;
+          default:
+            break;
+        }
 
-      if (updatedPlayer.x !== player.x || updatedPlayer.y !== player.y) {
         publish(updatedPlayer);
         updatePlayer(updatedPlayer);
+      } else {
+        console.log("cant");
       }
     };
 
@@ -156,15 +184,21 @@ const MazeBoard = ({ maze }: any) => {
     return () => {
       eventsSubscription.unsubscribe();
     };
-  }, [publish, userId, players, updatePlayer]);
+  }, [publish, userId, players, updatePlayer, canMove]);
+
+  const playersRefs: JSX.Element[] = [];
+  players.forEach((player: IPlayer) => {
+    playersRefs.push(<MovableIcon key={player.userId} player={player} />);
+  });
 
   return (
     <Box display="flex" gap="4rem">
       <Box display="flex" flexDirection="column" alignItems="center">
         <Heading>Game</Heading>
-        <MazeBackground>
-          <MazeGrid players={players}></MazeGrid>
-        </MazeBackground>
+        <Box>
+          {playersRefs}
+          <MazeGrid generatedMazeGrid={generatedMazeGrid} />
+        </Box>
       </Box>
       <Box>
         <Box display="flex" flexDirection="column" alignItems="center">
