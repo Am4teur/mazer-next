@@ -3,7 +3,7 @@ import { useChannel } from "@ably-labs/react-hooks";
 import { Box, Heading } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { IPlayer } from "player";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fromEvent } from "rxjs";
 import MazeGrid from "./MazerGrid";
 import MovableIcon from "./MovableIcon";
@@ -53,7 +53,10 @@ const MazeBoard = ({ maze }: any) => {
   // @ts-ignore
   const userId = session?.user.id || session?.user._id || "";
 
-  const generatedMazeGrid = generateMaze(maze.mazeSeed, maze.cols, maze.rows);
+  const generatedMazeGrid = useMemo(
+    () => generateMaze(maze.mazeSeed, maze.cols, maze.rows),
+    [maze]
+  );
 
   const updatePlayer = useCallback(
     (player: IPlayer) => {

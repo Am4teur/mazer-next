@@ -1,5 +1,6 @@
 import { Node } from "@/objects/mazeUtils";
 import { Grid, GridItem } from "@chakra-ui/react";
+import { memo } from "react";
 import MazeNode from "./MazeNode";
 
 interface IMazeGrid {
@@ -28,4 +29,4 @@ const MazeGrid = ({ generatedMazeGrid }: IMazeGrid) => {
   );
 };
 
-export default MazeGrid;
+export default memo(MazeGrid);
