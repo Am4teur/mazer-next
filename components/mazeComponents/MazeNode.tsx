@@ -9,6 +9,8 @@ interface IMazeBackground {
 }
 
 const MazeBackground = ({ imagePosition }: IMazeBackground) => (
+  // @TODO small improvement, refactor this component to use
+  // NextJS Image component or ChakraUI and then try to use the imageRendering: "pixelated"
   <Box
     display="flex"
     // flex="1 1 auto"
@@ -21,7 +23,7 @@ const MazeBackground = ({ imagePosition }: IMazeBackground) => (
     w="16px"
     h="16px"
     color="white"
-    //image-rendering: "pixalated"
+    // image-rendering: "pixelated"
   />
 );
 
@@ -108,9 +110,7 @@ const MazeNode = ({ node }: IMazeNode) => {
     >
       {fourByFourNode.map((row: any[], rowIdx: number) =>
         row.map((node: any, colIdx: number) => (
-          <GridItem key={"" + rowIdx + colIdx}>
-            {fourByFourNode[rowIdx][colIdx]}
-          </GridItem>
+          <GridItem key={"" + rowIdx + colIdx}>{node}</GridItem>
         ))
       )}
     </Grid>

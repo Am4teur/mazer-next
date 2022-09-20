@@ -10,31 +10,8 @@ import MovableIcon from "./MovableIcon";
 import OfflinePlayers from "./OfflinePlayers";
 import OnlinePlayers from "./OnlinePlayers";
 
-interface IMazeBoard {
-  children: JSX.Element;
-}
-
-const MazeBackground = ({ children }: IMazeBoard) => (
-  <Box
-    display="flex"
-    // flex="1 1 auto"
-    justifyContent="center"
-    alignItems="center"
-    backgroundImage="url('/pokemonArt/terrain/center.svg')"
-    backgroundSize="cover"
-    backgroundRepeat="no-repeat"
-    backgroundPosition="center"
-    w="640px"
-    h="640px"
-    color="white"
-    //image-rendering: "pixalated"
-  >
-    {children}
-  </Box>
-);
-
 const MazeBoard = ({ maze }: any) => {
-  // @TODO players should be a Map and not an object
+  // Map's info
   // Map's can be iterable and are organized
   // Map's support non string keys, whereas objects only support string keys
   //  (this actually is good to know but I do not intend to use it in players)
@@ -60,17 +37,18 @@ const MazeBoard = ({ maze }: any) => {
 
   const updatePlayer = useCallback(
     (player: IPlayer) => {
-      const { userId, x, y } = player;
-      const newPlayers = new Map<string, IPlayer>(players);
-      newPlayers.set(userId, {
-        ...players.get(userId)!,
-        x,
-        y,
+      setPlayers((prevPlayers) => {
+        const { userId, x, y } = player;
+        const newPlayers = new Map<string, IPlayer>(prevPlayers);
+        newPlayers.set(userId, {
+          ...prevPlayers.get(userId)!,
+          x,
+          y,
+        });
+        return newPlayers;
       });
-
-      setPlayers(newPlayers);
     },
-    [players]
+    [setPlayers]
   );
 
   const [channel, ably] = useChannel("maze:<mazeId>", (message: any) => {
@@ -175,8 +153,6 @@ const MazeBoard = ({ maze }: any) => {
 
         publish(updatedPlayer);
         updatePlayer(updatedPlayer);
-      } else {
-        console.log("cant");
       }
     };
 
