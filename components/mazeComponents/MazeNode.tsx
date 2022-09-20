@@ -14,7 +14,7 @@ const MazeBackground = ({ imagePosition }: IMazeBackground) => (
     // flex="1 1 auto"
     justifyContent="center"
     alignItems="center"
-    backgroundImage={`url('/pokemonArt/terrain/${imagePosition}.png')`}
+    backgroundImage={`url('/pokemonArt/terrain/${imagePosition}.svg')`}
     backgroundSize="cover"
     backgroundRepeat="no-repeat"
     backgroundPosition="center"
@@ -28,21 +28,62 @@ const MazeBackground = ({ imagePosition }: IMazeBackground) => (
 const getImagePosition = (node: Node, i: number, j: number): string => {
   if (i === 0) {
     // top
-    return node.N ? "center" : "top";
+    if (j === 0) {
+      // 1 top left
+      return node.N
+        ? node.W
+          ? "grass_top_left_corner"
+          : "grass_left"
+        : node.W
+        ? "grass_top"
+        : "grass_bottom_right_incorner";
+    }
+    if (j === 3) {
+      // 2 top right
+      return node.N
+        ? node.E
+          ? "grass_top_right_corner"
+          : "grass_right"
+        : node.E
+        ? "grass_top"
+        : "grass_bottom_left_incorner";
+    }
+    return node.N ? "grass_center" : "grass_top";
   }
-  if (j === 4) {
-    // right
-    return node.E ? "center" : "right";
-  }
-  if (i === 4) {
+
+  if (i === 3) {
     // bottom
-    return node.S ? "center" : "bottom";
+    if (j === 0) {
+      // 3 bottom left
+      return node.S
+        ? node.W
+          ? "grass_bottom_left_corner"
+          : "grass_left"
+        : node.W
+        ? "grass_bottom"
+        : "grass_top_right_incorner";
+    }
+    if (j === 3) {
+      // 4 bottom right
+      return node.S
+        ? node.E
+          ? "grass_bottom_right_corner"
+          : "grass_right"
+        : node.E
+        ? "grass_bottom"
+        : "grass_top_left_incorner";
+    }
+    return node.S ? "grass_center" : "grass_bottom";
+  }
+  if (j === 3) {
+    // right
+    return node.E ? "grass_center" : "grass_right";
   }
   if (j === 0) {
     // left
-    return node.W ? "center" : "left";
+    return node.W ? "grass_center" : "grass_left";
   }
-  return "center";
+  return "grass_center";
 };
 
 const MazeNode = ({ node }: IMazeNode) => {
