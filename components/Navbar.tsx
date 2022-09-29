@@ -1,8 +1,8 @@
-import NextLink from "next/link";
-import NextImage from "next/image";
-import Button from "@/components/basics/Button";
+import CustomButton from "@/components/basics/CustomButton";
 import Logo from "@/public/favicon.ico";
 import { signOut, useSession } from "next-auth/react";
+import NextImage from "next/image";
+import NextLink from "next/link";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
@@ -38,17 +38,17 @@ const Navbar = () => {
         {session ? (
           <>
             <NextLink href="/profile" passHref>
-              <Button>Profile</Button>
+              <CustomButton>Profile</CustomButton>
             </NextLink>
-            <Button onClick={() => signOut()}>Sign Out</Button>
+            <CustomButton onClick={() => signOut()}>Sign Out</CustomButton>
           </>
         ) : (
           <>
             <NextLink href="/auth" passHref>
-              <Button>Login</Button>
+              <CustomButton>Login</CustomButton>
             </NextLink>
             {/* <NextLink href="/auth" passHref>
-              <Button>Register</Button>
+              <CustomButton>Register</CustomButton>
             </NextLink> */}
           </>
         )}

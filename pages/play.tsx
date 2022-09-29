@@ -1,8 +1,8 @@
 import MazeBoard from "@/components/mazeComponents/MazeBoard";
 import { configureAbly } from "@ably-labs/react-hooks";
+import { Box, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
-import NextLink from "next/link";
 import { IPlayer } from "player";
 
 configureAbly({
@@ -16,14 +16,13 @@ const Play = ({ maze }: any) => {
   };
 
   return (
-    <>
-      <h1>Play</h1>
-      <NextLink href="/" passHref>
-        <button>Home</button>
-      </NextLink>
-      <button onClick={() => console.log(maze)}>get mazes</button>
+    <Box py="2rem">
+      <Heading textColor={"white"} size="4xl" textAlign="center" mb="8">
+        Play
+      </Heading>
+
       <MazeBoard maze={newMaze} />
-    </>
+    </Box>
   );
 };
 

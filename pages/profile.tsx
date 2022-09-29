@@ -1,10 +1,10 @@
-import { useState } from "react";
-import NextLink from "next/link";
+import CustomButton from "@/components/basics/CustomButton";
 import CustomHead from "@/components/CustomHead";
-import { useSession } from "next-auth/react";
-import Button from "@/components/basics/Button";
 import { Input } from "@chakra-ui/react";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import NextLink from "next/link";
+import { useState } from "react";
 
 const Profile = () => {
   const [username, setUsername] = useState("");
@@ -52,15 +52,15 @@ const Profile = () => {
             width="auto"
             borderColor="gray.500"
           />
-          <Button onClick={changeUsername}>Change Username</Button>
+          <CustomButton onClick={changeUsername}>Change Username</CustomButton>
         </>
       ) : (
         <div>Access Denied</div>
       )}
       <NextLink href="/" passHref>
-        <Button>Home</Button>
+        <CustomButton>Home</CustomButton>
       </NextLink>
-      <Button onClick={getInfoFromDB}>Get Users</Button>
+      <CustomButton onClick={getInfoFromDB}>Get Users</CustomButton>
     </>
   );
 };

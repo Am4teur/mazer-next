@@ -1,9 +1,14 @@
-import Button from "@/components/basics/Button";
+import { Box, Text } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
 
 const Home: NextPage = () => {
+  const buttonsData: any[] = [
+    { path: "/play", name: "Play" },
+    { path: "/learn", name: "Learn" },
+    { path: "/path-finding", name: "Path finding" },
+  ];
   return (
     <>
       <Head>
@@ -14,21 +19,26 @@ const Home: NextPage = () => {
       </Head>
 
       <div className="flex md:flex-row flex-col gap-4">
-        <div className="flex justify-center items-center border-solid border-2 border-gray-700 rounded-md shadow-lg w-64 h-64">
-          <NextLink href="/play" passHref>
-            <Button>play</Button>
-          </NextLink>
-        </div>
-        <div className="flex justify-center items-center border-solid border-2 border-gray-700 rounded-md shadow-lg w-64 h-64">
-          <NextLink href="/learn" passHref>
-            <Button>learn</Button>
-          </NextLink>
-        </div>
-        <div className="flex justify-center items-center border-solid border-2 border-gray-700 rounded-md shadow-lg w-64 h-64">
-          <NextLink href="/path-finding" passHref>
-            <Button>path finding</Button>
-          </NextLink>
-        </div>
+        {buttonsData.map((buttonData) => (
+          <Box
+            key={buttonData.path}
+            backgroundColor={"brand.blue-5"}
+            rounded="md"
+            h={64}
+            w={64}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            boxShadow="lg"
+            textAlign="center"
+          >
+            <NextLink href={buttonData.path} passHref>
+              <Text color="white" fontSize="6xl">
+                {buttonData.name}
+              </Text>
+            </NextLink>
+          </Box>
+        ))}
       </div>
     </>
   );
