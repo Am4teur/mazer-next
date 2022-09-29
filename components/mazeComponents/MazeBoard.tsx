@@ -1,6 +1,6 @@
 import { generateMaze, Node } from "@/objects/mazeUtils";
 import { useChannel } from "@ably-labs/react-hooks";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { IPlayer } from "player";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -11,19 +11,21 @@ import OfflinePlayers from "./OfflinePlayers";
 import OnlinePlayers from "./OnlinePlayers";
 
 const MazeBoard = ({ maze }: any) => {
-  // Map's info
-  // Map's can be iterable and are organized
-  // Map's support non string keys, whereas objects only support string keys
-  //  (this actually is good to know but I do not intend to use it in players)
-  // Map's size is easy with myMap.size, whereas with objects you ned to do a loop
-  // Map's has myMap.has(key), whereas objects I can do the same via myObj[key] ? hasKey : notHasKey
-  // Map's has myMap.get(key), whereas objects myObj[key]
-  // const myMap = new Map<string, {id: number, something: string}>([
-  //   ["userId1": {id: 1, something: "yea1"}],
-  //   ["userId2": {id: 2, something: "yea2"}],
-  // ])
-  // Map's has myMap.set("userId1": {id: 1, something: "yea1"}), whereas objects myObj[key]
-  // Map's can also be ...myMap
+  /*
+   * Map's info
+   * Map's can be iterable and are organized
+   * Map's support non string keys, whereas objects only support string keys
+   *  (this actually is good to know but I do not intend to use it in players)
+   * Map's size is easy with myMap.size, whereas with objects you ned to do a loop
+   * Map's has myMap.has(key), whereas objects I can do the same via myObj[key] ? hasKey : notHasKey
+   * Map's has myMap.get(key), whereas objects myObj[key]
+   * const myMap = new Map<string, {id: number, something: string}>([
+   *   ["userId1": {id: 1, something: "yea1"}],
+   *   ["userId2": {id: 2, something: "yea2"}],
+   * ])
+   * Map's has myMap.set("userId1": {id: 1, something: "yea1"}), whereas objects myObj[key]
+   * Map's can also be ...myMap
+   */
   const [players, setPlayers] = useState<Map<string, IPlayer>>(maze.players);
   const { data: session } = useSession();
   // @TODO remove this ts ignore, when we login with email, we need to get the _id
@@ -165,28 +167,21 @@ const MazeBoard = ({ maze }: any) => {
     };
   }, [publish, userId, players, updatePlayer, canMove]);
 
-  const playersRefs: JSX.Element[] = [];
+  const playersIconRefs: JSX.Element[] = [];
   players.forEach((player: IPlayer) => {
-    playersRefs.push(<MovableIcon key={player.userId} player={player} />);
+    playersIconRefs.push(<MovableIcon key={player.userId} player={player} />);
   });
 
   return (
-    <Box display="flex" gap="4rem">
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <Heading>Game</Heading>
-        <Box>
-          {playersRefs}
+    <Box display="flex" gap="8">
+      <Box className="colOne">
+        <Box rounded="lg" overflow="hidden">
+          {playersIconRefs}
           <MazeGrid generatedMazeGrid={generatedMazeGrid} />
         </Box>
       </Box>
-      <Box>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Heading>Online Players</Heading>
-        </Box>
+      <Box className="colTwo">
         <OnlinePlayers />
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Heading>Offline Players</Heading>
-        </Box>
         <OfflinePlayers players={players} />
       </Box>
     </Box>
