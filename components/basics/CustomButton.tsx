@@ -1,15 +1,15 @@
-import React from "react";
 import { motion } from "framer-motion";
+import React from "react";
 
-interface IButtonProps {
+interface ICustomButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   ref?: React.Ref<HTMLButtonElement>;
   // href
 }
 
-const Button = React.forwardRef(function helper(
-  { children, onClick, ref }: IButtonProps,
+const CustomButton = React.forwardRef(function helper(
+  { children, onClick, ref }: ICustomButtonProps,
   _
 ) {
   return (
@@ -25,4 +25,4 @@ const Button = React.forwardRef(function helper(
   );
 });
 
-export default Button;
+export default CustomButton;
