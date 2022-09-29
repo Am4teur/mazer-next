@@ -294,9 +294,7 @@ const Auth: NextPage = ({ providers }: any) => {
                       <Button
                         mt={6}
                         bg="brand.blue-3"
-                        _hover={{ bg: "hsl(204, 100%, 70%)" }}
-                        // hover is the brand.blue-3 from 47% to 70%
-                        // https://www.w3schools.com/colors/colors_converter.asp
+                        _hover={{ bg: "brand.blue-3-hover" }}
                         isLoading={props.isSubmitting}
                         type="submit"
                       >
