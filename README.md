@@ -1,3 +1,3 @@
 # Mazer Next
 
-Learn path finding algorithms by resolving mazes
+Learn pathfinding algorithms by resolving mazes

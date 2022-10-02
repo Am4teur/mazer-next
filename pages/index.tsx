@@ -7,7 +7,7 @@ const Home: NextPage = () => {
   const buttonsData: any[] = [
     { path: "/play", name: "Play" },
     { path: "/learn", name: "Learn" },
-    { path: "/path-finding", name: "Path finding" },
+    { path: "/pathfinding", name: "Pathfinding" },
   ];
   return (
     <>
