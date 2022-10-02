@@ -1,17 +1,33 @@
 import CustomButton from "@/components/basics/CustomButton";
 import Logo from "@/public/favicon.ico";
+import { Box } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
 import NextImage from "next/image";
 import NextLink from "next/link";
+import InvisibleButton from "./basics/InvisibleButton";
+
+interface INavbarButtons {
+  name: string;
+  icon: string;
+  path: string;
+}
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  console.log("session", session);
-
   const isLoading = status === "loading";
 
+  const buttons: INavbarButtons[] = [
+    { name: "Play", icon: "MazeIcon", path: "/play" },
+    {
+      name: "PathFinding",
+      icon: "",
+      path: "/pathfinding",
+    },
+    { name: "Algorithms", icon: "/navbar/algo-icon.png", path: "/learn" },
+  ];
+
   return (
-    <nav className="logo flex justify-center items-center border-b-4 mx-4 bg-gray-600 rounded-full text-gray-whiteish">
+    <Box display="flex" justifyContent="center" alignItems="center" py="4">
       <NextLink href="/" passHref>
         <a className="logo flex basis-1/4 items-center gap-2 ml-8">
           <NextImage src={Logo} width={32} height={32} />
@@ -19,16 +35,12 @@ const Navbar = () => {
           {/* change the font to 'gino nord' */}
         </a>
       </NextLink>
-      <div className="flex flex-auto flex-basis-1/2 justify-center buttons gap-4">
-        <NextLink href="/play">
-          <a>Play</a>
-        </NextLink>
-        <NextLink href="/path-finding">
-          <a>Path Finding</a>
-        </NextLink>
-        <NextLink href="/learn">
-          <a>Learn Maze Creation</a>
-        </NextLink>
+      <div className="flex flex-auto flex-basis-1/2 justify-center buttons gap-8">
+        {buttons.map((button) => (
+          <NextLink key={button.name} href={button.path} passHref>
+            <InvisibleButton icon={button.icon} text={button.name} />
+          </NextLink>
+        ))}
       </div>
       <div
         className={`auth flex basis-1/4 gap-4 justify-end mr-8 ${
@@ -53,7 +65,7 @@ const Navbar = () => {
           </>
         )}
       </div>
-    </nav>
+    </Box>
   );
 };
 
