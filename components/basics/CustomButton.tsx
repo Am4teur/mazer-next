@@ -1,27 +1,47 @@
-import { motion } from "framer-motion";
+import { chakra } from "@chakra-ui/react";
+import { isValidMotionProp, motion } from "framer-motion";
+import NextLink from "next/link";
 import React from "react";
 
 interface ICustomButtonProps {
   children: React.ReactNode;
+  href?: string;
   onClick?: () => void;
-  ref?: React.Ref<HTMLButtonElement>;
-  // href
 }
 
+const MotionLink = chakra(motion.a, {
+  // Allow motion props and the children prop to be forwarded.
+  // All other chakra props not matching the motion props will still be forwarded.
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) ||
+    prop === "children" ||
+    prop === "onClick" ||
+    prop === "href",
+});
+
 const CustomButton = React.forwardRef(function helper(
-  { children, onClick, ref }: ICustomButtonProps,
+  { children, href = "", onClick }: ICustomButtonProps,
   _
 ) {
   return (
-    <motion.button
-      className="border-solid border-2 border-blue-3 bg-blue-3 rounded-lg shadow-lg shadow-slate-400 px-4 my-2 text-white"
-      whileTap={{ y: 2 }}
-      whileHover={{ scale: 1.1 }}
-      onClick={onClick}
-      ref={ref}
-    >
-      {children}
-    </motion.button>
+    <NextLink href={href} passHref>
+      <MotionLink
+        whileTap={{ y: 2 }}
+        whileHover={{ scale: 1.1 }}
+        onClick={onClick}
+        rounded="lg"
+        shadow="lg"
+        px="6"
+        py="2"
+        color={"white"}
+        display="flex"
+        gap="0.75rem"
+        alignItems="center"
+        backgroundColor={"brand.blue-3"}
+      >
+        {children}
+      </MotionLink>
+    </NextLink>
   );
 });
 

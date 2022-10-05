@@ -1,6 +1,6 @@
 import CustomButton from "@/components/basics/CustomButton";
 import Logo from "@/public/favicon.ico";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
 import NextImage from "next/image";
 import NextLink from "next/link";
@@ -16,11 +16,11 @@ const Navbar = () => {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
 
-  const buttons: INavbarButtons[] = [
+  const buttonsInfo: INavbarButtons[] = [
     { name: "Play", icon: "MazeIcon", path: "/play" },
     {
-      name: "PathFinding",
-      icon: "",
+      name: "Pathfinding",
+      icon: "/navbar/pathfinding-icon.png",
       path: "/pathfinding",
     },
     { name: "Algorithms", icon: "/navbar/algo-icon.png", path: "/learn" },
@@ -31,15 +31,14 @@ const Navbar = () => {
       <NextLink href="/" passHref>
         <a className="logo flex basis-1/4 items-center gap-2 ml-8">
           <NextImage src={Logo} width={32} height={32} />
-          <span className="text-center text-2xl">Mazer</span>
-          {/* change the font to 'gino nord' */}
+          <Text fontSize="2xl" color={"white"}>
+            Mazer
+          </Text>
         </a>
       </NextLink>
       <div className="flex flex-auto flex-basis-1/2 justify-center buttons gap-8">
-        {buttons.map((button) => (
-          <NextLink key={button.name} href={button.path} passHref>
-            <InvisibleButton icon={button.icon} text={button.name} />
-          </NextLink>
+        {buttonsInfo.map((buttonInfo) => (
+          <InvisibleButton key={buttonInfo.name} buttonInfo={buttonInfo} />
         ))}
       </div>
       <div
@@ -49,19 +48,13 @@ const Navbar = () => {
       >
         {session ? (
           <>
-            <NextLink href="/profile" passHref>
-              <CustomButton>Profile</CustomButton>
-            </NextLink>
+            <CustomButton href={"/profile"}>Profile</CustomButton>
             <CustomButton onClick={() => signOut()}>Sign Out</CustomButton>
           </>
         ) : (
           <>
-            <NextLink href="/auth" passHref>
-              <CustomButton>Login</CustomButton>
-            </NextLink>
-            {/* <NextLink href="/auth" passHref>
-              <CustomButton>Register</CustomButton>
-            </NextLink> */}
+            <CustomButton href={"/auth"}>Login</CustomButton>
+            {/* <CustomButton>Register</CustomButton> */}
           </>
         )}
       </div>

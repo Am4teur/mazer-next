@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import { Box } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 interface ILayoutProps {
   children: React.ReactNode;
@@ -16,7 +16,8 @@ const Layout = ({ children }: ILayoutProps) => {
 
   return (
     <Box
-      backgroundColor={"#0193f7"}
+      // bgGradient={"linear(106.34deg,#0052ff 40%,#2ccefe 100%)"}
+      bgGradient={"linear(106deg,#0052ff,#090422 150.05%)"}
       display="flex"
       flexDirection="column"
       minH="100vh"

@@ -24,6 +24,9 @@ const theme = extendTheme({
       "blue-4": "#105093",
       "blue-5": "#166cc6",
       "blue-6": "#0a3460",
+      // need a secondary color for blue
+      // - hot pink
+      // - orange
     },
   },
 });
