@@ -22,7 +22,6 @@ const MazeBackground = ({ imagePosition }: IMazeBackground) => (
     backgroundPosition="center"
     w="16px"
     h="16px"
-    color="white"
     // image-rendering: "pixelated"
   />
 );

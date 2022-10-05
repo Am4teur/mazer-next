@@ -49,7 +49,6 @@ const InvisibleButton = React.forwardRef(function helper(
         rounded="xl"
         px="6"
         py="2"
-        color={"white"}
         borderWidth="1px"
         borderStyle="solid"
         borderColor="transparent"

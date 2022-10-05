@@ -17,7 +17,7 @@ const Play = ({ maze }: any) => {
 
   return (
     <Box py="2rem">
-      <Heading textColor={"white"} size="4xl" textAlign="center" mb="8">
+      <Heading size="4xl" textAlign="center" mb="8">
         Play
       </Heading>
 

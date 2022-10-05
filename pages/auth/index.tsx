@@ -65,7 +65,6 @@ const Background = ({ children }: any) => (
     backgroundAttachment="fixed"
     width="100%"
     height="100vh"
-    color="white"
   >
     {children}
   </Box>

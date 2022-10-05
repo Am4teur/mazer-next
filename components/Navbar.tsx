@@ -31,9 +31,7 @@ const Navbar = () => {
       <NextLink href="/" passHref>
         <a className="logo flex basis-1/4 items-center gap-2 ml-8">
           <NextImage src={Logo} width={32} height={32} />
-          <Text fontSize="2xl" color={"white"}>
-            Mazer
-          </Text>
+          <Text fontSize="2xl">Mazer</Text>
         </a>
       </NextLink>
       <div className="flex flex-auto flex-basis-1/2 justify-center buttons gap-8">

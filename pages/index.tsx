@@ -33,9 +33,7 @@ const Home: NextPage = () => {
             textAlign="center"
           >
             <NextLink href={buttonData.path} passHref>
-              <Text color="white" fontSize="6xl">
-                {buttonData.name}
-              </Text>
+              <Text fontSize="6xl">{buttonData.name}</Text>
             </NextLink>
           </Box>
         ))}

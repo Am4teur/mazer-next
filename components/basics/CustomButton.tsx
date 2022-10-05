@@ -33,7 +33,6 @@ const CustomButton = React.forwardRef(function helper(
         shadow="lg"
         px="6"
         py="2"
-        color={"white"}
         display="flex"
         gap="0.75rem"
         alignItems="center"
