@@ -30,6 +30,8 @@ const Layout = ({ children }: ILayoutProps) => {
         flexGrow={1}
         justifyContent="center"
         alignItems="center"
+        my="4"
+        mx="32"
       >
         {children}
       </Box>
