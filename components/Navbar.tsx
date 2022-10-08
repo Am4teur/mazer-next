@@ -24,25 +24,45 @@ const Navbar = () => {
       path: "/pathfinding",
     },
     { name: "Algorithms", icon: "/navbar/algo-icon.png", path: "/learn" },
+    // Generating / Generation isntead of Algorithms
   ];
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" py="4">
-      <NextLink href="/" passHref>
-        <a className="logo flex basis-1/4 items-center gap-2 ml-8">
-          <NextImage src={Logo} width={32} height={32} />
-          <Text fontSize="2xl">Mazer</Text>
-        </a>
-      </NextLink>
-      <div className="flex flex-auto flex-basis-1/2 justify-center buttons gap-8">
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      py="4"
+      px="32"
+    >
+      <Box display="flex" flexBasis={"25%"}>
+        <NextLink href="/" passHref>
+          <a>
+            <Box display="flex" alignItems="center" gap="2">
+              <NextImage src={Logo} width={32} height={32} />
+              <Text fontSize="3xl">Mazer</Text>
+            </Box>
+          </a>
+        </NextLink>
+      </Box>
+      <Box
+        display="flex"
+        flex={"1 1 auto"}
+        justifyContent="center"
+        flexBasis={"50%"}
+        gap="8"
+      >
         {buttonsInfo.map((buttonInfo) => (
           <InvisibleButton key={buttonInfo.name} buttonInfo={buttonInfo} />
         ))}
-      </div>
-      <div
-        className={`auth flex basis-1/4 gap-4 justify-end mr-8 ${
-          isLoading ? "opacity-0" : "opacity-100"
-        }`}
+      </Box>
+      <Box
+        display="flex"
+        flexBasis={"25%"}
+        alignItems="center"
+        justifyContent="end"
+        gap="4"
+        opacity={isLoading ? "0" : "100%"}
       >
         {session ? (
           <>
@@ -55,7 +75,7 @@ const Navbar = () => {
             {/* <CustomButton>Register</CustomButton> */}
           </>
         )}
-      </div>
+      </Box>
     </Box>
   );
 };
