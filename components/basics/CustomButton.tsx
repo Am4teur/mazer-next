@@ -1,4 +1,4 @@
-import { chakra } from "@chakra-ui/react";
+import { chakra, Text } from "@chakra-ui/react";
 import { isValidMotionProp, motion } from "framer-motion";
 import NextLink from "next/link";
 import React from "react";
@@ -38,7 +38,7 @@ const CustomButton = React.forwardRef(function helper(
         alignItems="center"
         backgroundColor={"brand.blue-3"}
       >
-        {children}
+        <Text>{children}</Text>
       </MotionLink>
     </NextLink>
   );
