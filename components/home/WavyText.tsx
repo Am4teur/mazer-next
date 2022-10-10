@@ -1,21 +1,24 @@
-import { HTMLMotionProps, motion, Variants } from "framer-motion";
-import { FC } from "react";
+import { chakra, shouldForwardProp } from "@chakra-ui/react";
+import {
+  HTMLMotionProps,
+  isValidMotionProp,
+  motion,
+  Variants,
+} from "framer-motion";
+import { useEffect, useState } from "react";
 
 interface Props extends HTMLMotionProps<"div"> {
   text: string;
   delay?: number;
-  replay?: boolean;
   duration?: number;
 }
 
-const WavyText: FC<Props> = ({
-  text,
-  delay = 0,
-  duration = 0.05,
-  replay,
-  ...props
-}: Props) => {
-  const letters = Array.from(text);
+const WavyText = ({ text, delay = 0, duration = 0.05, ...props }: Props) => {
+  const [letters, setLetters] = useState(Array.from(text));
+
+  useEffect(() => {
+    setLetters(Array.from(text));
+  }, [text]);
 
   const container: Variants = {
     hidden: {
@@ -23,20 +26,14 @@ const WavyText: FC<Props> = ({
     },
     visible: (i: number = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: duration, delayChildren: i * delay },
+      transition: {
+        staggerChildren: duration,
+        delayChildren: i * delay,
+      },
     }),
   };
 
   const child: Variants = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 200,
-      },
-    },
     hidden: {
       opacity: 0,
       y: 20,
@@ -46,22 +43,44 @@ const WavyText: FC<Props> = ({
         stiffness: 200,
       },
     },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 200,
+      },
+    },
   };
 
+  const mystyles = {
+    display: "inline-flex",
+    overflow: "hidden",
+    "-webkit-background-clip": "text",
+    "-webkit-text-fill-color": "transparent",
+  } as React.CSSProperties;
+
+  const ChakraBox = chakra(motion.span, {
+    shouldForwardProp: (prop) =>
+      isValidMotionProp(prop) || shouldForwardProp(prop),
+  });
+
   return (
-    <motion.h1
-      style={{ display: "flex", overflow: "hidden" }}
+    <ChakraBox
       variants={container}
       initial="hidden"
       animate="visible"
-      {...props}
+      style={mystyles}
+      fontSize="8xl"
+      bgGradient="linear(90deg,#f72585,#4cc9F0)"
     >
       {letters.map((letter, index) => (
         <motion.span key={index} variants={child}>
           {letter === " " ? "\u00A0" : letter}
         </motion.span>
       ))}
-    </motion.h1>
+    </ChakraBox>
   );
 };
 
